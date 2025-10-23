@@ -1,0 +1,1 @@
+C:\Users\conta\.jdks\openjdk-24.0.1\bin\java -jar purpur-1.21.6-2465.jar nogui

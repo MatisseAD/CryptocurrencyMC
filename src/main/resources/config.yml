@@ -1,0 +1,68 @@
+market:
+  enabled_symbols: ["BTC","ETH","SOL","DOGE"]
+  page_size: 21
+  gui_title: "&6Crypto Market"
+  refresh_seconds: 15
+
+chart:
+  retention_points: 360
+  sample_seconds: 60
+  default_points: 24
+  default_range: "h1"
+  sparkline_chars: "▁▂▃▄▅▆▇█"
+
+placeholders:
+  enabled: true
+  format:
+    money: "#,##0.00"
+    quantity: "#,##0.####"
+
+api:
+  timeout_ms: 4000
+  retry: 1
+  circuit_breaker:
+    error_threshold: 5
+    open_seconds: 30
+
+
+messages:
+  prefix: "&6[&eCrypto&6] &r"
+  no_permission: "&cVous n’avez pas la permission."
+  player_only: "&cJoueur uniquement."
+  invalid_amount: "&cMontant invalide."
+  help:
+    header: "&eCommandes disponibles :"
+  usage:
+    price: "&eUsage: /{label} price <symbole...>"
+    trade: "&eUsage: /{label} {sub} <symbole> <montant>"
+    balance: "&eUsage: /{label} balance <joueur>"
+    convert: "&eUsage: /{label} convert <symbole> <symbole2> <montant> &7(placeholder)"
+    edit: "&eUsage: /{label} {sub} <joueur> <symbole> <montant> &7(placeholder)"
+    giveall: "&eUsage: /{label} giveall <symbole> <montant> &7(placeholder)"
+    history: "&eUsage: /{label} history [joueur] &7(placeholder)"
+    chart: "&eUsage: /{label} chart <symbole> [points] [range]"
+    api: "&eUsage: /{label} api <status|refresh> &7(placeholder)"
+  price:
+    error: "&cErreur prix {symbol} : {error}"
+  chart:
+    hydrating: "&7Hydratation de la série en cours pour &e{symbol}&7... Réessaie dans quelques secondes."
+  top:
+    placeholder: "&eTop 5 investisseurs : &7(placeholder)"
+  reload:
+    ok: "&aConfiguration rechargée."
+  balance:
+    empty: "&ePortefeuille de &f{player} &7: (vidé)"
+    header: "&ePortefeuille de &f{player} :"
+    total: "&7Valeur totale : &a${total}"
+    error: "&cErreur lors du calcul du portefeuille : {error}"
+  trade:
+    buy:
+      nomoney: "&cFonds insuffisants. Requis: ${usd} | Solde: ${balance}"
+      success: "&aAchat: &f{amount} {symbol} &7(-${usd})"
+      failed: "&cAchat impossible: {error}"
+      simulated: "&eAchat simulé: &f{amount} {symbol} &7(~${usd})"
+    sell:
+      notenough: "&cVous n'avez pas assez de {symbol}. Possédé: {owned}"
+      success: "&aVente: &f{amount} {symbol} &7(+${usd})"
+      failed: "&cVente impossible: {error}"
+      simulated: "&eVente simulée: &f{amount} {symbol} &7(~${usd})"

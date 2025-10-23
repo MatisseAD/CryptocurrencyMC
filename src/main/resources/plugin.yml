@@ -1,0 +1,37 @@
+name: Cryptocurrency
+version: '1.0-SNAPSHOT'
+main: fr.jachou.cryptocurrency.Cryptocurrency
+api-version: '1.21'
+softdepend: [Vault, PlaceholderAPI]
+commands:
+  crypto:
+    aliases: [cryptocurrency, cc]
+    description: Main command
+permissions:
+  crypto.user.price:
+    description: Voir les prix
+    default: true
+  crypto.user.trade:
+    description: Trader
+    default: true
+  crypto.user.balance:
+    description: Voir son portefeuille
+    default: true
+  crypto.user.top:
+    description: Voir le classement
+    default: true
+  crypto.user.chart:
+    description: Voir les graphiques
+    default: true
+  crypto.user.market:
+    description: Accéder au marché (GUI)
+    default: true
+  crypto.admin.reload:
+    description: Recharger la config
+    default: op
+  crypto.admin.edit:
+    description: Modifier les wallets
+    default: op
+  crypto.admin.giveall:
+    description: Airdrop global
+    default: op
