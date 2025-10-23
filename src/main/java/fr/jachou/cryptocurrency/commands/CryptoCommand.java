@@ -106,6 +106,8 @@ public class CryptoCommand implements CommandExecutor, TabCompleter {
                                         EconomyResponse r = econ.withdrawPlayer(player, usd);
                                         if (r != null && r.transactionSuccess()) {
                                             wm2.add(player.getUniqueId(), symUp, amount);
+                                            plugin.getTransactionManager().record(player.getUniqueId(), "BUY", 
+                                                String.format("Bought %s %s for $%s", amtStr, symUp, usdStr));
                                             sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("trade.buy.success", "&aAchat: &f{amount} {symbol} &7(-${usd})", java.util.Map.of(
                                                     "amount", amtStr,
                                                     "symbol", symUp,
@@ -136,6 +138,8 @@ public class CryptoCommand implements CommandExecutor, TabCompleter {
                                         if (ok) {
                                             EconomyResponse r = econ.depositPlayer(player, usd);
                                             if (r != null && r.transactionSuccess()) {
+                                                plugin.getTransactionManager().record(player.getUniqueId(), "SELL", 
+                                                    String.format("Sold %s %s for $%s", amtStr, symUp, usdStr));
                                                 sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("trade.sell.success", "&aVente: &f{amount} {symbol} &7(+${usd})", java.util.Map.of(
                                                         "amount", amtStr,
                                                         "symbol", symUp,
@@ -216,7 +220,60 @@ public class CryptoCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
             case "history" -> {
-                sender.sendMessage(Messages.f("usage.history", "&eUsage: /{label} history [joueur] &7(placeholder)", java.util.Map.of("label", label)));
+                UUID targetUuid;
+                String targetName;
+                
+                if (args.length >= 2) {
+                    // View someone else's history
+                    if (!sender.hasPermission("crypto.admin.edit")) {
+                        sender.sendMessage(Messages.t("no_permission", "&cVous n'avez pas la permission."));
+                        return true;
+                    }
+                    OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+                    targetUuid = target.getUniqueId();
+                    targetName = args[1];
+                } else {
+                    // View own history
+                    if (!(sender instanceof Player player)) {
+                        sender.sendMessage(Messages.f("usage.history", "&eUsage: /{label} history <joueur>", 
+                            java.util.Map.of("label", label)));
+                        return true;
+                    }
+                    targetUuid = player.getUniqueId();
+                    targetName = player.getName();
+                }
+                
+                int limit = 10;
+                if (args.length >= 3) {
+                    try { limit = Math.max(1, Math.min(50, Integer.parseInt(args[2]))); } catch (Exception ignored) {}
+                }
+                
+                var txns = plugin.getTransactionManager().getRecent(targetUuid, limit);
+                
+                sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("history.header", 
+                    "&eHistorique de &f{player} &7({count} dernières transactions):", 
+                    java.util.Map.of("player", targetName, "count", String.valueOf(txns.size()))));
+                
+                if (txns.isEmpty()) {
+                    sender.sendMessage(Messages.t("history.empty", "&7Aucune transaction trouvée."));
+                    return true;
+                }
+                
+                java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm");
+                for (var txn : txns) {
+                    String time = txn.time.atZone(java.time.ZoneId.systemDefault()).format(fmt);
+                    String typeColor = switch(txn.type) {
+                        case "BUY" -> "§a";
+                        case "SELL" -> "§c";
+                        case "TRANSFER_IN" -> "§b";
+                        case "TRANSFER_OUT" -> "§e";
+                        case "CONVERT" -> "§d";
+                        case "AIRDROP" -> "§6";
+                        default -> "§7";
+                    };
+                    sender.sendMessage(String.format("§8[%s] %s%s §7- §f%s", time, typeColor, txn.type, txn.details));
+                }
+                
                 return true;
             }
             case "chart" -> {
@@ -250,7 +307,58 @@ public class CryptoCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
             case "api" -> {
-                sender.sendMessage(Messages.f("usage.api", "&eUsage: /{label} api <status|refresh> &7(placeholder)", java.util.Map.of("label", label)));
+                if (!sender.hasPermission("crypto.admin.reload")) {
+                    sender.sendMessage(Messages.t("no_permission", "&cVous n'avez pas la permission."));
+                    return true;
+                }
+                
+                if (args.length < 2) {
+                    sender.sendMessage(Messages.f("usage.api", "&eUsage: /{label} api <status|refresh>", 
+                        java.util.Map.of("label", label)));
+                    return true;
+                }
+                
+                String subCmd = args[1].toLowerCase(Locale.ROOT);
+                PriceService ps = plugin.getPriceService();
+                
+                if (subCmd.equals("status")) {
+                    var status = ps.getApiStatus();
+                    String statusColor = switch(status) {
+                        case OK -> "§a";
+                        case DEGRADED -> "§e";
+                        case DOWN -> "§c";
+                    };
+                    sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("api.status", 
+                        "&7État de l'API: {status}{status_name}", 
+                        java.util.Map.of("status", statusColor, "status_name", status.name())));
+                } else if (subCmd.equals("refresh")) {
+                    if (args.length < 3) {
+                        sender.sendMessage(Messages.f("usage.api.refresh", 
+                            "&eUsage: /{label} api refresh <symbole>", 
+                            java.util.Map.of("label", label)));
+                        return true;
+                    }
+                    String sym = args[2].toUpperCase(Locale.ROOT);
+                    ps.refresh(sym);
+                    sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("api.refresh", 
+                        "&7Rafraîchissement de &e{symbol} &7en cours...", 
+                        java.util.Map.of("symbol", sym)));
+                    
+                    ps.getPriceUsd(sym).thenAccept(price -> runSync(() -> {
+                        sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("api.refresh.success", 
+                            "&a{symbol} &7= &a${price}", 
+                            java.util.Map.of("symbol", sym, "price", fmt2(price))));
+                    })).exceptionally(ex -> {
+                        runSync(() -> sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("api.refresh.failed", 
+                            "&cÉchec du rafraîchissement: {error}", 
+                            java.util.Map.of("error", ex.getMessage() == null ? "" : ex.getMessage()))));
+                        return null;
+                    });
+                } else {
+                    sender.sendMessage(Messages.f("usage.api", "&eUsage: /{label} api <status|refresh>", 
+                        java.util.Map.of("label", label)));
+                }
+                
                 return true;
             }
             case "market" -> {

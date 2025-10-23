@@ -78,6 +78,9 @@ public final class Cryptocurrency extends JavaPlugin {
         int openSec = getConfig().getInt("api.circuit_breaker.open_seconds", 30);
         priceService.configureCircuitBreaker(errTh, openSec);
 
+        // Load wallets from file
+        walletManager.loadFromFile(walletsFile);
+
         timeseriesService = new PriceTimeseriesService(this, priceService);
         int retention = getConfig().getInt("chart.retention_points", 360);
         int sample = getConfig().getInt("chart.sample_seconds", 60);
@@ -131,6 +134,9 @@ public final class Cryptocurrency extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        
+        // Save wallets to file
+        walletManager.saveToFile(walletsFile);
 
         walletsConfig.set("wallets", null); // reset la section
         for (var entry : wallets.entrySet()) {
@@ -140,6 +146,11 @@ public final class Cryptocurrency extends JavaPlugin {
             walletsConfig.save(walletsFile);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        
+        // Stop timeseries sampler
+        if (timeseriesService != null) {
+            timeseriesService.stop();
         }
 
     }
