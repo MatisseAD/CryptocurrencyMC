@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API & Developer Guide - CryptocurrencyMC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">₿</span>
+                <span>CryptocurrencyMC</span>
+            </a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="commands.html">Commands</a></li>
+                <li><a href="permissions.html">Permissions</a></li>
+                <li><a href="configuration.html">Configuration</a></li>
+                <li><a href="api.html" class="active">API</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <h2>API & Developer Guide</h2>
+            <p>This guide is for developers who want to integrate with CryptocurrencyMC or extend its functionality.</p>
+        </section>
+
+        <section class="section">
+            <h2>Maven/Gradle Dependency</h2>
+            <p>Add CryptocurrencyMC as a dependency to your plugin project.</p>
+
+            <h3>Maven</h3>
+            <pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;fr.jachou&lt;/groupId&gt;
+        &lt;artifactId&gt;cryptocurrency&lt;/artifactId&gt;
+        &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+
+            <h3>Gradle</h3>
+            <pre><code>dependencies {
+    compileOnly 'fr.jachou:cryptocurrency:1.0-SNAPSHOT'
+}</code></pre>
+
+            <h3>plugin.yml</h3>
+            <p>Add CryptocurrencyMC as a soft dependency:</p>
+            <pre><code>name: YourPlugin
+version: 1.0
+main: com.yourname.yourplugin.YourPlugin
+softdepend: [Cryptocurrency]</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Getting the Plugin Instance</h2>
+            <pre><code>import fr.jachou.cryptocurrency.Cryptocurrency;
+import org.bukkit.plugin.Plugin;
+
+public class YourPlugin extends JavaPlugin {
+    private Cryptocurrency cryptoPlugin;
+    
+    @Override
+    public void onEnable() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("Cryptocurrency");
+        if (plugin instanceof Cryptocurrency) {
+            cryptoPlugin = (Cryptocurrency) plugin;
+            getLogger().info("Hooked into CryptocurrencyMC!");
+        } else {
+            getLogger().warning("CryptocurrencyMC not found!");
+        }
+    }
+}</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Using the Wallet Manager</h2>
+            <p>The WalletManager handles all player wallet operations.</p>
+
+            <h3>Get Balance</h3>
+            <pre><code>import fr.jachou.cryptocurrency.services.WalletManager;
+import java.util.UUID;
+
+WalletManager walletManager = cryptoPlugin.getWalletManager();
+UUID playerUuid = player.getUniqueId();
+
+// Get balance for a specific cryptocurrency
+double btcBalance = walletManager.get(playerUuid, "BTC");
+double ethBalance = walletManager.get(playerUuid, "ETH");</code></pre>
+
+            <h3>Set Balance</h3>
+            <pre><code>// Set exact amount
+walletManager.set(playerUuid, "BTC", 1.5);
+walletManager.set(playerUuid, "ETH", 50.0);</code></pre>
+
+            <h3>Add to Balance</h3>
+            <pre><code>// Add to existing balance
+walletManager.add(playerUuid, "BTC", 0.5);
+walletManager.add(playerUuid, "DOGE", 100.0);</code></pre>
+
+            <h3>Remove from Balance</h3>
+            <pre><code>// Remove from balance (returns true if successful)
+boolean success = walletManager.remove(playerUuid, "BTC", 0.25);
+if (success) {
+    player.sendMessage("Removed 0.25 BTC from your wallet");
+} else {
+    player.sendMessage("Insufficient balance");
+}</code></pre>
+
+            <h3>Get All Balances</h3>
+            <pre><code>import java.util.Map;
+
+// Get all cryptocurrencies and their balances for a player
+Map&lt;String, Double&gt; allBalances = walletManager.getAll(playerUuid);
+for (Map.Entry&lt;String, Double&gt; entry : allBalances.entrySet()) {
+    String symbol = entry.getKey();
+    double amount = entry.getValue();
+    player.sendMessage(symbol + ": " + amount);
+}</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Using the Price Service</h2>
+            <p>The PriceService fetches real-time cryptocurrency prices.</p>
+
+            <h3>Get Current Price</h3>
+            <pre><code>import fr.jachou.cryptocurrency.services.PriceService;
+import java.util.concurrent.CompletableFuture;
+
+PriceService priceService = cryptoPlugin.getPriceService();
+
+// Async price fetch (recommended)
+priceService.getPrice("BTC").thenAccept(price -&gt; {
+    if (price != null) {
+        player.sendMessage("BTC Price: $" + price);
+    } else {
+        player.sendMessage("Failed to fetch price");
+    }
+});</code></pre>
+
+            <h3>Get Multiple Prices</h3>
+            <pre><code>import java.util.Arrays;
+import java.util.List;
+
+List&lt;String&gt; symbols = Arrays.asList("BTC", "ETH", "SOL");
+priceService.getPrices(symbols).thenAccept(prices -&gt; {
+    for (Map.Entry&lt;String, Double&gt; entry : prices.entrySet()) {
+        String symbol = entry.getKey();
+        Double price = entry.getValue();
+        if (price != null) {
+            player.sendMessage(symbol + ": $" + price);
+        }
+    }
+});</code></pre>
+
+            <h3>Check API Status</h3>
+            <pre><code>// Get circuit breaker status
+String status = priceService.getCircuitBreakerStatus();
+player.sendMessage("API Status: " + status);</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Transaction Manager</h2>
+            <p>Record transactions for player history.</p>
+
+            <h3>Record a Transaction</h3>
+            <pre><code>import fr.jachou.cryptocurrency.services.TransactionManager;
+
+TransactionManager txManager = cryptoPlugin.getTransactionManager();
+
+// Record a custom transaction
+txManager.record(
+    playerUuid,
+    "CUSTOM",           // Transaction type
+    "Custom Action",    // Description
+    player.getName()    // Actor (who performed it)
+);</code></pre>
+
+            <h3>Transaction Types</h3>
+            <ul>
+                <li><strong>BUY</strong> - Cryptocurrency purchase</li>
+                <li><strong>SELL</strong> - Cryptocurrency sale</li>
+                <li><strong>TRANSFER</strong> - Player-to-player transfer</li>
+                <li><strong>CONVERT</strong> - Crypto-to-crypto conversion</li>
+                <li><strong>ADMIN</strong> - Admin wallet modification</li>
+                <li><strong>AIRDROP</strong> - Mass distribution</li>
+                <li><strong>CUSTOM</strong> - Custom transaction type</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>PlaceholderAPI Integration</h2>
+            <p>Use CryptocurrencyMC placeholders in your plugin.</p>
+
+            <h3>Available Placeholders</h3>
+            <table>
+                <tr>
+                    <th>Placeholder</th>
+                    <th>Description</th>
+                    <th>Example Output</th>
+                </tr>
+                <tr>
+                    <td>%crypto_balance_[symbol]%</td>
+                    <td>Player's balance of a crypto</td>
+                    <td>1.5</td>
+                </tr>
+                <tr>
+                    <td>%crypto_balance_usd_[symbol]%</td>
+                    <td>USD value of player's holdings</td>
+                    <td>45000.00</td>
+                </tr>
+                <tr>
+                    <td>%crypto_price_[symbol]%</td>
+                    <td>Current price of a crypto</td>
+                    <td>30000.00</td>
+                </tr>
+                <tr>
+                    <td>%crypto_total_usd%</td>
+                    <td>Total portfolio value</td>
+                    <td>75000.00</td>
+                </tr>
+            </table>
+
+            <h3>Using Placeholders in Code</h3>
+            <pre><code>import me.clip.placeholderapi.PlaceholderAPI;
+
+// Set placeholders in a string
+String message = "You have %crypto_balance_BTC% BTC worth $%crypto_balance_usd_BTC%";
+String parsed = PlaceholderAPI.setPlaceholders(player, message);
+player.sendMessage(parsed);</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Events (Future Feature)</h2>
+            <p>CryptocurrencyMC currently doesn't fire custom events, but this is planned for future versions.</p>
+
+            <h3>Planned Events</h3>
+            <div class="alert alert-info">
+                <strong>🚧 Coming Soon:</strong> These events are planned for a future release:
+            </div>
+            <ul>
+                <li><strong>CryptoTradeEvent</strong> - Fired when a player buys or sells crypto</li>
+                <li><strong>CryptoTransferEvent</strong> - Fired when crypto is transferred between players</li>
+                <li><strong>CryptoConvertEvent</strong> - Fired when crypto is converted</li>
+                <li><strong>WalletUpdateEvent</strong> - Fired when a wallet balance changes</li>
+                <li><strong>PriceUpdateEvent</strong> - Fired when prices are updated</li>
+            </ul>
+
+            <h3>Example Event Handler (Future)</h3>
+            <pre><code>// This is planned for a future version
+@EventHandler
+public void onCryptoTrade(CryptoTradeEvent event) {
+    Player player = event.getPlayer();
+    String symbol = event.getSymbol();
+    double amount = event.getAmount();
+    boolean isBuy = event.isBuy();
+    
+    if (isBuy) {
+        // Handle buy event
+    } else {
+        // Handle sell event
+    }
+}</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Best Practices</h2>
+
+            <h3>Asynchronous Operations</h3>
+            <div class="alert alert-warning">
+                <strong>⚠️ Important:</strong> Always use asynchronous methods when fetching prices to avoid blocking the main thread.
+            </div>
+            <pre><code>// Good - Async
+priceService.getPrice("BTC").thenAccept(price -&gt; {
+    // Run on main thread if needed
+    Bukkit.getScheduler().runTask(plugin, () -&gt; {
+        player.sendMessage("Price: $" + price);
+    });
+});
+
+// Bad - Would block main thread if sync method existed
+// Never do this!</code></pre>
+
+            <h3>Error Handling</h3>
+            <pre><code>// Always handle null prices
+priceService.getPrice("BTC").thenAccept(price -&gt; {
+    if (price == null) {
+        player.sendMessage("Unable to fetch price");
+        return;
+    }
+    // Use price
+}).exceptionally(throwable -&gt; {
+    throwable.printStackTrace();
+    player.sendMessage("Error fetching price");
+    return null;
+});</code></pre>
+
+            <h3>Balance Checks</h3>
+            <pre><code>// Always check balance before removing
+double currentBalance = walletManager.get(playerUuid, "BTC");
+double removeAmount = 0.5;
+
+if (currentBalance &gt;= removeAmount) {
+    walletManager.remove(playerUuid, "BTC", removeAmount);
+    player.sendMessage("Transaction successful");
+} else {
+    player.sendMessage("Insufficient balance");
+}</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Example Plugin Integration</h2>
+            <p>Complete example of a plugin that rewards players with crypto for mining blocks:</p>
+
+            <pre><code>package com.example.cryptorewards;
+
+import fr.jachou.cryptocurrency.Cryptocurrency;
+import fr.jachou.cryptocurrency.services.WalletManager;
+import fr.jachou.cryptocurrency.services.TransactionManager;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class CryptoRewards extends JavaPlugin implements Listener {
+    private Cryptocurrency cryptoPlugin;
+    private WalletManager walletManager;
+    private TransactionManager txManager;
+    
+    @Override
+    public void onEnable() {
+        // Hook into CryptocurrencyMC
+        Plugin plugin = getServer().getPluginManager().getPlugin("Cryptocurrency");
+        if (plugin instanceof Cryptocurrency) {
+            cryptoPlugin = (Cryptocurrency) plugin;
+            walletManager = cryptoPlugin.getWalletManager();
+            txManager = cryptoPlugin.getTransactionManager();
+            
+            // Register event listener
+            getServer().getPluginManager().registerEvents(this, this);
+            
+            getLogger().info("CryptoRewards enabled!");
+        } else {
+            getLogger().severe("CryptocurrencyMC not found! Disabling...");
+            getServer().getPluginManager().disablePlugin(this);
+        }
+    }
+    
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        Material blockType = event.getBlock().getType();
+        
+        // Reward crypto based on block type
+        if (blockType == Material.DIAMOND_ORE || blockType == Material.DEEPSLATE_DIAMOND_ORE) {
+            // Give 0.001 BTC for diamond ore
+            walletManager.add(player.getUniqueId(), "BTC", 0.001);
+            txManager.record(
+                player.getUniqueId(),
+                "MINING_REWARD",
+                "Mined diamond ore: +0.001 BTC",
+                "CryptoRewards"
+            );
+            player.sendMessage("§6[CryptoRewards] §aYou earned 0.001 BTC!");
+        } else if (blockType == Material.GOLD_ORE || blockType == Material.DEEPSLATE_GOLD_ORE) {
+            // Give 0.05 DOGE for gold ore
+            walletManager.add(player.getUniqueId(), "DOGE", 0.05);
+            txManager.record(
+                player.getUniqueId(),
+                "MINING_REWARD",
+                "Mined gold ore: +0.05 DOGE",
+                "CryptoRewards"
+            );
+            player.sendMessage("§6[CryptoRewards] §aYou earned 0.05 DOGE!");
+        }
+    }
+}</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>API Documentation</h2>
+
+            <h3>Main Classes</h3>
+            <table>
+                <tr>
+                    <th>Class</th>
+                    <th>Package</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Cryptocurrency</td>
+                    <td>fr.jachou.cryptocurrency</td>
+                    <td>Main plugin class</td>
+                </tr>
+                <tr>
+                    <td>WalletManager</td>
+                    <td>fr.jachou.cryptocurrency.services</td>
+                    <td>Manages player wallets</td>
+                </tr>
+                <tr>
+                    <td>PriceService</td>
+                    <td>fr.jachou.cryptocurrency.services</td>
+                    <td>Fetches crypto prices</td>
+                </tr>
+                <tr>
+                    <td>TransactionManager</td>
+                    <td>fr.jachou.cryptocurrency.services</td>
+                    <td>Records transactions</td>
+                </tr>
+                <tr>
+                    <td>Messages</td>
+                    <td>fr.jachou.cryptocurrency.util</td>
+                    <td>Message formatting</td>
+                </tr>
+            </table>
+
+            <h3>Key Methods</h3>
+            <h4>WalletManager</h4>
+            <ul>
+                <li><code>double get(UUID uuid, String symbol)</code> - Get balance</li>
+                <li><code>void set(UUID uuid, String symbol, double amount)</code> - Set balance</li>
+                <li><code>void add(UUID uuid, String symbol, double amount)</code> - Add to balance</li>
+                <li><code>boolean remove(UUID uuid, String symbol, double amount)</code> - Remove from balance</li>
+                <li><code>Map&lt;String, Double&gt; getAll(UUID uuid)</code> - Get all balances</li>
+                <li><code>void saveToFile(File file)</code> - Save wallets to disk</li>
+                <li><code>void loadFromFile(File file)</code> - Load wallets from disk</li>
+            </ul>
+
+            <h4>PriceService</h4>
+            <ul>
+                <li><code>CompletableFuture&lt;Double&gt; getPrice(String symbol)</code> - Get single price</li>
+                <li><code>CompletableFuture&lt;Map&lt;String, Double&gt;&gt; getPrices(List&lt;String&gt; symbols)</code> - Get multiple prices</li>
+                <li><code>String getCircuitBreakerStatus()</code> - Get API health status</li>
+            </ul>
+
+            <h4>TransactionManager</h4>
+            <ul>
+                <li><code>void record(UUID uuid, String type, String details, String actor)</code> - Record transaction</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Support & Contributing</h2>
+            <p>If you're developing an integration or extension:</p>
+            <ul>
+                <li><strong>GitHub:</strong> <a href="https://github.com/MatisseAD/CryptocurrencyMC">MatisseAD/CryptocurrencyMC</a></li>
+                <li><strong>Issues:</strong> Report bugs or request features on GitHub Issues</li>
+                <li><strong>Pull Requests:</strong> Contributions are welcome!</li>
+            </ul>
+
+            <div class="alert alert-info">
+                <strong>💡 Need Help?</strong> Check the <a href="faq.html" style="color: var(--primary-color);">FAQ page</a> 
+                or open an issue on GitHub for developer support.
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>CryptocurrencyMC Plugin Documentation</p>
+        <p>Created by <a href="https://github.com/MatisseAD">MatisseAD</a> | 
+           <a href="https://github.com/MatisseAD/CryptocurrencyMC">GitHub Repository</a></p>
+    </footer>
+</body>
+</html>

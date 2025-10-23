@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commands Reference - CryptocurrencyMC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">₿</span>
+                <span>CryptocurrencyMC</span>
+            </a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="commands.html" class="active">Commands</a></li>
+                <li><a href="permissions.html">Permissions</a></li>
+                <li><a href="configuration.html">Configuration</a></li>
+                <li><a href="api.html">API</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <h2>Commands Reference</h2>
+            <p>Complete guide to all CryptocurrencyMC commands. All commands can be used with aliases: 
+               <code>/crypto</code>, <code>/cryptocurrency</code>, or <code>/cc</code></p>
+        </section>
+
+        <section class="section">
+            <h2>Player Commands</h2>
+            <p>These commands are available to all players by default.</p>
+
+            <h3>Price Information</h3>
+            
+            <h4>/crypto price [symbol]</h4>
+            <p>View the current price of a cryptocurrency.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto price</span> <span class="optional">[symbol]</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>symbol</td>
+                    <td>Cryptocurrency symbol (BTC, ETH, etc.)</td>
+                    <td>No - shows all if omitted</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.user.price</code> (default: true)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto price BTC
+/crypto price
+/cc price ETH</code></pre>
+
+            <h3>Trading Commands</h3>
+
+            <h4>/crypto buy [symbol] [amount]</h4>
+            <p>Purchase cryptocurrency using your server currency.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto buy</span> <span class="arg">&lt;symbol&gt;</span> <span class="arg">&lt;amount&gt;</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>symbol</td>
+                    <td>Cryptocurrency to buy (BTC, ETH, etc.)</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>amount</td>
+                    <td>Amount of crypto to purchase</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.user.trade</code> (default: true)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto buy BTC 0.5
+/crypto buy ETH 10
+/crypto buy DOGE 1000</code></pre>
+            <div class="alert alert-info">
+                <strong>💡 Note:</strong> The cost in server currency is calculated based on current market prices. 
+                You must have sufficient balance in your economy account.
+            </div>
+
+            <h4>/crypto sell [symbol] [amount]</h4>
+            <p>Sell cryptocurrency for server currency.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto sell</span> <span class="arg">&lt;symbol&gt;</span> <span class="arg">&lt;amount&gt;</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>symbol</td>
+                    <td>Cryptocurrency to sell</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>amount</td>
+                    <td>Amount of crypto to sell</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.user.trade</code> (default: true)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto sell BTC 0.25
+/crypto sell ETH 5
+/crypto sell ADA 100</code></pre>
+
+            <h4>/crypto transfer [player] [symbol] [amount]</h4>
+            <p>Transfer cryptocurrency to another player.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto transfer</span> <span class="arg">&lt;player&gt;</span> <span class="arg">&lt;symbol&gt;</span> <span class="arg">&lt;amount&gt;</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>player</td>
+                    <td>Target player username</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>symbol</td>
+                    <td>Cryptocurrency to transfer</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>amount</td>
+                    <td>Amount to transfer</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.user.trade</code> (default: true)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto transfer Steve BTC 0.1
+/crypto transfer Alex ETH 2.5</code></pre>
+
+            <h4>/crypto convert [from] [to] [amount]</h4>
+            <p>Convert one cryptocurrency to another.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto convert</span> <span class="arg">&lt;from_symbol&gt;</span> <span class="arg">&lt;to_symbol&gt;</span> <span class="arg">&lt;amount&gt;</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>from_symbol</td>
+                    <td>Source cryptocurrency</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>to_symbol</td>
+                    <td>Target cryptocurrency</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>amount</td>
+                    <td>Amount to convert</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.user.trade</code> (default: true)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto convert BTC ETH 0.5
+/crypto convert ETH BNB 10</code></pre>
+            <div class="alert alert-info">
+                <strong>💡 Note:</strong> Conversion rates are calculated using USD as an intermediary currency based on current market prices.
+            </div>
+
+            <h3>Portfolio Management</h3>
+
+            <h4>/crypto balance [player]</h4>
+            <p>View your cryptocurrency portfolio or another player's portfolio.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto balance</span> <span class="optional">[player]</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>player</td>
+                    <td>Player username to check</td>
+                    <td>No - shows your own if omitted</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.user.balance</code> (default: true)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto balance
+/crypto balance Steve</code></pre>
+
+            <h4>/crypto top [limit]</h4>
+            <p>View the leaderboard of top cryptocurrency investors.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto top</span> <span class="optional">[limit]</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>limit</td>
+                    <td>Number of top players to show (max 20)</td>
+                    <td>No - defaults to 10</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.user.top</code> (default: true)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto top
+/crypto top 20</code></pre>
+
+            <h4>/crypto history [player] [limit]</h4>
+            <p>View transaction history.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto history</span> <span class="optional">[player]</span> <span class="optional">[limit]</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>player</td>
+                    <td>Player to view history for</td>
+                    <td>No - shows your own</td>
+                </tr>
+                <tr>
+                    <td>limit</td>
+                    <td>Number of transactions to show (max 50)</td>
+                    <td>No - defaults to 10</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.user.balance</code> (default: true)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto history
+/crypto history Steve 20</code></pre>
+
+            <h3>Market & Charts</h3>
+
+            <h4>/crypto market</h4>
+            <p>Open the interactive market GUI with real-time prices and charts.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto market</span>
+            </div>
+            <p><strong>Permission:</strong> <code>crypto.user.market</code> (default: true)</p>
+            <p><strong>Example:</strong></p>
+            <pre><code>/crypto market</code></pre>
+
+            <h4>/crypto chart [symbol]</h4>
+            <p>View a price chart for a specific cryptocurrency.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto chart</span> <span class="arg">&lt;symbol&gt;</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>symbol</td>
+                    <td>Cryptocurrency symbol</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.user.chart</code> (default: true)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto chart BTC
+/crypto chart ETH</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Admin Commands</h2>
+            <p>These commands require operator status or specific admin permissions.</p>
+
+            <h3>Wallet Management</h3>
+
+            <h4>/crypto set [player] [symbol] [amount]</h4>
+            <p>Set a player's cryptocurrency balance to a specific amount.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto set</span> <span class="arg">&lt;player&gt;</span> <span class="arg">&lt;symbol&gt;</span> <span class="arg">&lt;amount&gt;</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>player</td>
+                    <td>Target player username</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>symbol</td>
+                    <td>Cryptocurrency symbol</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>amount</td>
+                    <td>New balance amount</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.admin.edit</code> (default: op)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto set Steve BTC 1.0
+/crypto set Alex ETH 50</code></pre>
+
+            <h4>/crypto add [player] [symbol] [amount]</h4>
+            <p>Add cryptocurrency to a player's wallet.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto add</span> <span class="arg">&lt;player&gt;</span> <span class="arg">&lt;symbol&gt;</span> <span class="arg">&lt;amount&gt;</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>player</td>
+                    <td>Target player username</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>symbol</td>
+                    <td>Cryptocurrency symbol</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>amount</td>
+                    <td>Amount to add</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.admin.edit</code> (default: op)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto add Steve BTC 0.5
+/crypto add Alex DOGE 100</code></pre>
+
+            <h4>/crypto remove [player] [symbol] [amount]</h4>
+            <p>Remove cryptocurrency from a player's wallet.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto remove</span> <span class="arg">&lt;player&gt;</span> <span class="arg">&lt;symbol&gt;</span> <span class="arg">&lt;amount&gt;</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>player</td>
+                    <td>Target player username</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>symbol</td>
+                    <td>Cryptocurrency symbol</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>amount</td>
+                    <td>Amount to remove</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.admin.edit</code> (default: op)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto remove Steve BTC 0.25
+/crypto remove Alex ETH 10</code></pre>
+
+            <h3>Mass Distribution</h3>
+
+            <h4>/crypto giveall [symbol] [amount]</h4>
+            <p>Give cryptocurrency to all online players (airdrop).</p>
+            <div class="command-syntax">
+                <span class="command">/crypto giveall</span> <span class="arg">&lt;symbol&gt;</span> <span class="arg">&lt;amount&gt;</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>symbol</td>
+                    <td>Cryptocurrency symbol</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>amount</td>
+                    <td>Amount to give each player</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.admin.giveall</code> (default: op)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto giveall BTC 0.01
+/crypto giveall DOGE 50</code></pre>
+            <div class="alert alert-warning">
+                <strong>⚠️ Warning:</strong> This command affects all online players. Use with caution as it can significantly impact your server's economy.
+            </div>
+
+            <h3>System Management</h3>
+
+            <h4>/crypto reload</h4>
+            <p>Reload the plugin configuration without restarting the server.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto reload</span>
+            </div>
+            <p><strong>Permission:</strong> <code>crypto.admin.reload</code> (default: op)</p>
+            <p><strong>Example:</strong></p>
+            <pre><code>/crypto reload</code></pre>
+            <div class="alert alert-info">
+                <strong>💡 Note:</strong> This reloads messages, enabled cryptocurrencies, and other config options. 
+                Wallets and transaction history are not affected.
+            </div>
+
+            <h4>/crypto api status</h4>
+            <p>Check the health status of the CoinGecko API connection.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto api status</span>
+            </div>
+            <p><strong>Permission:</strong> <code>crypto.admin.reload</code> (default: op)</p>
+            <p><strong>Example:</strong></p>
+            <pre><code>/crypto api status</code></pre>
+
+            <h4>/crypto api refresh [symbol]</h4>
+            <p>Force a price refresh for a specific cryptocurrency.</p>
+            <div class="command-syntax">
+                <span class="command">/crypto api refresh</span> <span class="arg">&lt;symbol&gt;</span>
+            </div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>Description</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>symbol</td>
+                    <td>Cryptocurrency symbol to refresh</td>
+                    <td>Yes</td>
+                </tr>
+            </table>
+            <p><strong>Permission:</strong> <code>crypto.admin.reload</code> (default: op)</p>
+            <p><strong>Examples:</strong></p>
+            <pre><code>/crypto api refresh BTC
+/crypto api refresh ETH</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Command Aliases</h2>
+            <p>The main command <code>/crypto</code> has the following aliases:</p>
+            <table>
+                <tr>
+                    <th>Alias</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td><code>/crypto</code></td>
+                    <td><code>/crypto balance</code></td>
+                </tr>
+                <tr>
+                    <td><code>/cryptocurrency</code></td>
+                    <td><code>/cryptocurrency price BTC</code></td>
+                </tr>
+                <tr>
+                    <td><code>/cc</code></td>
+                    <td><code>/cc buy ETH 10</code></td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>Tips & Best Practices</h2>
+            <ul>
+                <li><strong>Use Tab Completion:</strong> Most commands support tab completion for symbols and player names</li>
+                <li><strong>Check Prices First:</strong> Always check current prices before making large trades</li>
+                <li><strong>Monitor API Status:</strong> Use <code>/crypto api status</code> if experiencing price fetch issues</li>
+                <li><strong>Regular Backups:</strong> Admins should backup <code>wallets.yml</code> regularly</li>
+                <li><strong>Test Transfers:</strong> Test with small amounts before large transfers</li>
+                <li><strong>Use the GUI:</strong> The market GUI provides the best trading experience for players</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>CryptocurrencyMC Plugin Documentation</p>
+        <p>Created by <a href="https://github.com/MatisseAD">MatisseAD</a> | 
+           <a href="https://github.com/MatisseAD/CryptocurrencyMC">GitHub Repository</a></p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation Guide - CryptocurrencyMC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">₿</span>
+                <span>CryptocurrencyMC</span>
+            </a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="installation.html" class="active">Installation</a></li>
+                <li><a href="commands.html">Commands</a></li>
+                <li><a href="permissions.html">Permissions</a></li>
+                <li><a href="configuration.html">Configuration</a></li>
+                <li><a href="api.html">API</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <h2>Installation Guide</h2>
+            <p>Follow these steps to install CryptocurrencyMC on your Minecraft server.</p>
+        </section>
+
+        <section class="section">
+            <h2>Prerequisites</h2>
+            
+            <h3>Server Requirements</h3>
+            <table>
+                <tr>
+                    <th>Requirement</th>
+                    <th>Version/Details</th>
+                </tr>
+                <tr>
+                    <td>Minecraft Server</td>
+                    <td>Paper or Spigot 1.21+</td>
+                </tr>
+                <tr>
+                    <td>Java</td>
+                    <td>Java 21 or higher</td>
+                </tr>
+                <tr>
+                    <td>Memory</td>
+                    <td>At least 1GB RAM allocated</td>
+                </tr>
+                <tr>
+                    <td>Internet Connection</td>
+                    <td>Required for API access</td>
+                </tr>
+            </table>
+
+            <h3>Required Dependencies</h3>
+            <div class="alert alert-warning">
+                <strong>⚠️ Important:</strong> CryptocurrencyMC requires Vault and an economy plugin to function. 
+                The plugin will not load without these dependencies.
+            </div>
+
+            <h4>1. Vault</h4>
+            <p>Download Vault from SpigotMC:</p>
+            <ul>
+                <li><a href="https://www.spigotmc.org/resources/vault.34315/" target="_blank">Vault on SpigotMC</a></li>
+                <li>Place <code>Vault.jar</code> in your <code>plugins/</code> folder</li>
+            </ul>
+
+            <h4>2. Economy Plugin</h4>
+            <p>Choose one of these popular economy plugins:</p>
+            <ul>
+                <li><strong>EssentialsX:</strong> <a href="https://essentialsx.net/downloads.html" target="_blank">Download</a> (Recommended)</li>
+                <li><strong>CMI:</strong> Premium plugin with advanced features</li>
+                <li><strong>GringottsEconomy:</strong> Alternative economy system</li>
+            </ul>
+
+            <h3>Optional Dependencies</h3>
+            <h4>PlaceholderAPI (Optional)</h4>
+            <p>For placeholder support in other plugins:</p>
+            <ul>
+                <li><a href="https://www.spigotmc.org/resources/placeholderapi.6245/" target="_blank">PlaceholderAPI on SpigotMC</a></li>
+                <li>After installing, use <code>/papi ecloud download Cryptocurrency</code> to enable placeholders</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Installation Steps</h2>
+
+            <h3>Step 1: Download the Plugin</h3>
+            <ol>
+                <li>Download the latest <code>Cryptocurrency-1.0-SNAPSHOT.jar</code> from the releases page</li>
+                <li>Or build from source using Maven: <code>mvn clean package</code></li>
+            </ol>
+
+            <h3>Step 2: Install Dependencies</h3>
+            <ol>
+                <li>Download and install Vault</li>
+                <li>Download and install an economy plugin (e.g., EssentialsX)</li>
+                <li>(Optional) Download and install PlaceholderAPI</li>
+            </ol>
+
+            <h3>Step 3: Upload to Server</h3>
+            <ol>
+                <li>Stop your Minecraft server</li>
+                <li>Place all plugin JAR files in the <code>plugins/</code> folder</li>
+                <li>Ensure your file structure looks like this:</li>
+            </ol>
+            <pre><code>server/
+├── plugins/
+│   ├── Vault.jar
+│   ├── EssentialsX.jar
+│   ├── PlaceholderAPI.jar (optional)
+│   └── Cryptocurrency-1.0-SNAPSHOT.jar
+├── world/
+└── server.jar</code></pre>
+
+            <h3>Step 4: Start the Server</h3>
+            <ol>
+                <li>Start your Minecraft server</li>
+                <li>Watch the console for any errors during plugin loading</li>
+                <li>Look for the message: <code>[Cryptocurrency] Plugin enabled successfully!</code></li>
+            </ol>
+
+            <div class="alert alert-info">
+                <strong>💡 First Run:</strong> On first startup, the plugin will create a default configuration file at 
+                <code>plugins/Cryptocurrency/config.yml</code> and a wallet storage file at <code>plugins/Cryptocurrency/wallets.yml</code>.
+            </div>
+
+            <h3>Step 5: Verify Installation</h3>
+            <p>Join your server and run these commands to verify everything works:</p>
+            <pre><code>/crypto price BTC
+/crypto market
+/crypto balance</code></pre>
+
+            <div class="alert alert-success">
+                <strong>✅ Success!</strong> If you can see cryptocurrency prices, the plugin is working correctly.
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Building from Source</h2>
+            <p>If you want to build the plugin from source code:</p>
+
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>Git installed on your system</li>
+                <li>Maven 3.6+ installed</li>
+                <li>Java Development Kit (JDK) 21+</li>
+            </ul>
+
+            <h3>Build Instructions</h3>
+            <ol>
+                <li>Clone the repository:</li>
+            </ol>
+            <pre><code>git clone https://github.com/MatisseAD/CryptocurrencyMC.git
+cd CryptocurrencyMC</code></pre>
+
+            <ol start="2">
+                <li>Build with Maven:</li>
+            </ol>
+            <pre><code>mvn clean package</code></pre>
+
+            <ol start="3">
+                <li>Find the compiled JAR:</li>
+            </ol>
+            <pre><code>target/cryptocurrency-1.0-SNAPSHOT.jar</code></pre>
+
+            <ol start="4">
+                <li>Copy the JAR to your server's <code>plugins/</code> folder</li>
+            </ol>
+        </section>
+
+        <section class="section">
+            <h2>Troubleshooting</h2>
+
+            <h3>Plugin Won't Load</h3>
+            <p><strong>Symptoms:</strong> Plugin appears red in <code>/plugins</code> or doesn't load at all.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check console for error messages</li>
+                <li>Verify you have Vault and an economy plugin installed</li>
+                <li>Ensure you're running Java 21 or higher: <code>java -version</code></li>
+                <li>Verify your server version is Paper/Spigot 1.21+</li>
+            </ul>
+
+            <h3>Price Fetching Fails</h3>
+            <p><strong>Symptoms:</strong> Commands show "Failed to fetch price" errors.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check your server's internet connection</li>
+                <li>Verify CoinGecko API is accessible: try visiting <code>https://api.coingecko.com/api/v3/ping</code></li>
+                <li>Check if your firewall is blocking outbound HTTPS requests</li>
+                <li>Wait a few minutes - the circuit breaker may have temporarily disabled API calls due to errors</li>
+                <li>Use <code>/crypto api status</code> to check API health</li>
+            </ul>
+
+            <h3>Vault Not Found</h3>
+            <p><strong>Symptoms:</strong> Error message about Vault not being found.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Install Vault plugin</li>
+                <li>Install an economy plugin (EssentialsX recommended)</li>
+                <li>Restart the server after installing both plugins</li>
+                <li>Verify Vault is loaded before Cryptocurrency (check plugin load order)</li>
+            </ul>
+
+            <h3>Wallets Not Persisting</h3>
+            <p><strong>Symptoms:</strong> Player balances reset after server restart.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check that <code>plugins/Cryptocurrency/wallets.yml</code> exists and is writable</li>
+                <li>Verify the server has write permissions in the <code>plugins/</code> directory</li>
+                <li>Look for errors in the console during server shutdown</li>
+                <li>Make sure the server is properly stopped (not killed forcefully)</li>
+            </ul>
+
+            <h3>Permission Errors</h3>
+            <p><strong>Symptoms:</strong> Players can't use commands despite having permission.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check your permission plugin configuration</li>
+                <li>Verify permissions are granted: <code>/lp user [player] permission check crypto.user.trade</code></li>
+                <li>See the <a href="permissions.html">Permissions page</a> for a full list of permission nodes</li>
+                <li>Note that some commands default to <code>op</code> only (admin commands)</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Updating the Plugin</h2>
+            
+            <h3>Update Procedure</h3>
+            <ol>
+                <li><strong>Backup Your Data:</strong> Copy <code>plugins/Cryptocurrency/</code> to a safe location</li>
+                <li><strong>Stop the Server:</strong> Gracefully shut down your server</li>
+                <li><strong>Replace the JAR:</strong> Delete the old plugin JAR and add the new one</li>
+                <li><strong>Start the Server:</strong> Start your server and check for any config changes</li>
+                <li><strong>Check Config:</strong> Review <code>config.yml</code> for any new options</li>
+                <li><strong>Reload:</strong> Use <code>/crypto reload</code> if needed</li>
+            </ol>
+
+            <div class="alert alert-warning">
+                <strong>⚠️ Config Changes:</strong> New versions may add new configuration options. 
+                Always check the config file after updating to take advantage of new features.
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Next Steps</h2>
+            <p>Now that you have the plugin installed, here's what to do next:</p>
+            <ul>
+                <li>📝 <a href="configuration.html">Configure the plugin</a> to match your server's needs</li>
+                <li>🔑 <a href="permissions.html">Set up permissions</a> for your players</li>
+                <li>📖 <a href="commands.html">Learn the commands</a> to manage the economy</li>
+                <li>❓ <a href="faq.html">Check the FAQ</a> for common questions</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>CryptocurrencyMC Plugin Documentation</p>
+        <p>Created by <a href="https://github.com/MatisseAD">MatisseAD</a> | 
+           <a href="https://github.com/MatisseAD/CryptocurrencyMC">GitHub Repository</a></p>
+    </footer>
+</body>
+</html>

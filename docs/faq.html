@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - CryptocurrencyMC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">₿</span>
+                <span>CryptocurrencyMC</span>
+            </a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="commands.html">Commands</a></li>
+                <li><a href="permissions.html">Permissions</a></li>
+                <li><a href="configuration.html">Configuration</a></li>
+                <li><a href="api.html">API</a></li>
+                <li><a href="faq.html" class="active">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <h2>Frequently Asked Questions</h2>
+            <p>Find answers to common questions about CryptocurrencyMC.</p>
+        </section>
+
+        <section class="section">
+            <h2>General Questions</h2>
+
+            <h3>What is CryptocurrencyMC?</h3>
+            <p>CryptocurrencyMC is a Minecraft plugin that brings real-world cryptocurrency trading to your server. 
+               Players can buy, sell, and trade popular cryptocurrencies using your server's economy system, 
+               with prices fetched in real-time from CoinGecko API.</p>
+
+            <h3>Is this real cryptocurrency trading?</h3>
+            <p><strong>No!</strong> This is a virtual economy system within Minecraft. Players use in-game currency 
+               (via Vault) to trade virtual representations of cryptocurrencies. No real money or actual cryptocurrencies 
+               are involved. It's purely for entertainment and education within the game.</p>
+
+            <h3>Do I need an API key?</h3>
+            <p>No API key is required! The plugin uses CoinGecko's free public API to fetch cryptocurrency prices. 
+               However, be aware of rate limits on the free tier.</p>
+
+            <h3>What Minecraft versions are supported?</h3>
+            <p>CryptocurrencyMC is designed for Minecraft 1.21+ (Paper or Spigot) with Java 21+. 
+               It may work on older versions but is not officially supported.</p>
+
+            <h3>Is the plugin free?</h3>
+            <p>Yes! CryptocurrencyMC is completely free and open-source under the MIT license.</p>
+        </section>
+
+        <section class="section">
+            <h2>Installation & Setup</h2>
+
+            <h3>What plugins are required?</h3>
+            <p><strong>Required:</strong></p>
+            <ul>
+                <li><strong>Vault</strong> - For economy integration</li>
+                <li><strong>Economy Plugin</strong> - Such as EssentialsX, CMI, or GringottsEconomy</li>
+            </ul>
+            <p><strong>Optional:</strong></p>
+            <ul>
+                <li><strong>PlaceholderAPI</strong> - For placeholder support in other plugins</li>
+            </ul>
+
+            <h3>The plugin won't load. What should I check?</h3>
+            <ol>
+                <li>Ensure you're running Java 21 or higher</li>
+                <li>Verify you're using Paper or Spigot 1.21+</li>
+                <li>Make sure Vault is installed and loaded</li>
+                <li>Verify an economy plugin is installed</li>
+                <li>Check the console for specific error messages</li>
+            </ol>
+
+            <h3>Can I use this on older Minecraft versions?</h3>
+            <p>The plugin is built for 1.21+ and uses features specific to newer versions. 
+               While it might work on 1.20, we recommend using the supported version for the best experience.</p>
+
+            <h3>Do I need to restart after installation?</h3>
+            <p>Yes, you should restart your server after installing the plugin for the first time. 
+               After that, you can use <code>/crypto reload</code> to apply config changes without restarting.</p>
+        </section>
+
+        <section class="section">
+            <h2>Features & Functionality</h2>
+
+            <h3>Which cryptocurrencies are supported?</h3>
+            <p>Any cryptocurrency available on CoinGecko can be added! Popular ones include:</p>
+            <ul>
+                <li>Bitcoin (BTC)</li>
+                <li>Ethereum (ETH)</li>
+                <li>Binance Coin (BNB)</li>
+                <li>Solana (SOL)</li>
+                <li>Cardano (ADA)</li>
+                <li>Dogecoin (DOGE)</li>
+                <li>XRP (XRP)</li>
+                <li>Polkadot (DOT)</li>
+                <li>And hundreds more!</li>
+            </ul>
+            <p>Configure them in <code>config.yml</code> under <code>market.enabled_symbols</code>.</p>
+
+            <h3>How often are prices updated?</h3>
+            <p>Prices are cached for 60 seconds by default to respect API rate limits. When a player requests a price, 
+               if the cached price is older than 60 seconds, a new price is fetched from CoinGecko.</p>
+
+            <h3>Can players trade directly with each other?</h3>
+            <p>Yes! Players can transfer cryptocurrencies to each other using the <code>/crypto transfer</code> command. 
+               They can also convert between different cryptocurrencies using <code>/crypto convert</code>.</p>
+
+            <h3>Are player balances saved?</h3>
+            <p>Yes! All player wallets are automatically saved to <code>plugins/Cryptocurrency/wallets.yml</code> 
+               when the server shuts down and loaded when it starts. Balances persist across restarts.</p>
+
+            <h3>What happens if the API goes down?</h3>
+            <p>The plugin has a built-in circuit breaker. If the API fails repeatedly, it temporarily stops making requests 
+               to prevent server lag. After a cooldown period, it automatically tries again. You can check API health with 
+               <code>/crypto api status</code>.</p>
+
+            <h3>Can players lose cryptocurrency?</h3>
+            <p>Players can only lose crypto through:</p>
+            <ul>
+                <li>Selling it back to the economy</li>
+                <li>Transferring it to other players</li>
+                <li>Converting to another cryptocurrency</li>
+                <li>Admin removal (<code>/crypto remove</code>)</li>
+            </ul>
+            <p>Cryptocurrency values fluctuate with real market prices, so the USD value can go up or down.</p>
+        </section>
+
+        <section class="section">
+            <h2>Economy & Trading</h2>
+
+            <h3>How is the exchange rate calculated?</h3>
+            <p>The plugin uses real-time prices from CoinGecko (in USD) and converts them to your server currency 
+               at a 1:1 ratio. For example, if BTC costs $30,000 USD, players pay $30,000 server currency to buy 1 BTC.</p>
+
+            <h3>Can I change the exchange rate?</h3>
+            <p>Currently, the exchange rate is fixed at 1:1 (USD to server currency). Custom multipliers are planned 
+               for a future version.</p>
+
+            <h3>Is there a fee for trading?</h3>
+            <p>No trading fees are applied by default. However, you could implement custom fees by modifying the plugin 
+               or using another plugin to tax transactions.</p>
+
+            <h3>Can players go negative in their wallet?</h3>
+            <p>No, all trading commands check that players have sufficient balance before allowing transactions.</p>
+
+            <h3>What if a player doesn't have enough server currency?</h3>
+            <p>The buy command checks the player's Vault balance before executing. If they don't have enough money, 
+               the transaction is cancelled with an error message.</p>
+
+            <h3>How do conversions work?</h3>
+            <p>When converting from one crypto to another (e.g., BTC to ETH), the plugin:</p>
+            <ol>
+                <li>Fetches the current price of both cryptocurrencies</li>
+                <li>Converts the source amount to USD value</li>
+                <li>Converts the USD value to the target cryptocurrency</li>
+                <li>Updates both balances atomically</li>
+            </ol>
+        </section>
+
+        <section class="section">
+            <h2>Administration</h2>
+
+            <h3>How do I give cryptocurrency to a player?</h3>
+            <p>Use the admin commands:</p>
+            <pre><code>/crypto add [player] [symbol] [amount]    # Add to existing balance
+/crypto set [player] [symbol] [amount]    # Set exact amount</code></pre>
+
+            <h3>How do I remove cryptocurrency from a player?</h3>
+            <pre><code>/crypto remove [player] [symbol] [amount]</code></pre>
+
+            <h3>Can I do a server-wide airdrop?</h3>
+            <p>Yes! Use the giveall command to distribute crypto to all online players:</p>
+            <pre><code>/crypto giveall [symbol] [amount]</code></pre>
+
+            <h3>How do I reset a player's wallet?</h3>
+            <p>Set all their balances to 0 using the set command for each cryptocurrency, or edit 
+               <code>wallets.yml</code> directly (requires server restart).</p>
+
+            <h3>Can I see all player balances?</h3>
+            <p>Use the top command to see a leaderboard of top investors:</p>
+            <pre><code>/crypto top</code></pre>
+            <p>For specific players, use:</p>
+            <pre><code>/crypto balance [player]</code></pre>
+
+            <h3>How do I backup player data?</h3>
+            <p>Simply backup the file <code>plugins/Cryptocurrency/wallets.yml</code>. You can also backup 
+               the entire <code>plugins/Cryptocurrency/</code> folder to preserve configuration.</p>
+        </section>
+
+        <section class="section">
+            <h2>Troubleshooting</h2>
+
+            <h3>Prices aren't updating</h3>
+            <p><strong>Possible causes:</strong></p>
+            <ul>
+                <li>No internet connection</li>
+                <li>CoinGecko API is down</li>
+                <li>Circuit breaker is open due to previous errors</li>
+                <li>Invalid cryptocurrency symbols in config</li>
+            </ul>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check internet connection</li>
+                <li>Use <code>/crypto api status</code> to check API health</li>
+                <li>Try <code>/crypto api refresh [symbol]</code> to force update</li>
+                <li>Wait for circuit breaker to reset (30 seconds by default)</li>
+                <li>Verify symbols in config are valid CoinGecko symbols</li>
+            </ul>
+
+            <h3>Players get "insufficient balance" errors</h3>
+            <p>This means they don't have enough of that cryptocurrency in their wallet. 
+               Check their balance with <code>/crypto balance [player]</code>.</p>
+
+            <h3>Market GUI doesn't open</h3>
+            <p><strong>Check:</strong></p>
+            <ul>
+                <li>Player has <code>crypto.user.market</code> permission</li>
+                <li>No errors in console when opening</li>
+                <li>GUI isn't blocked by another plugin</li>
+            </ul>
+
+            <h3>Commands don't work</h3>
+            <p><strong>Check:</strong></p>
+            <ul>
+                <li>Player has correct permissions</li>
+                <li>Command syntax is correct</li>
+                <li>Plugin is loaded (<code>/plugins</code> shows green)</li>
+                <li>No command conflicts with other plugins</li>
+            </ul>
+
+            <h3>Wallets reset after restart</h3>
+            <p>This means wallets aren't being saved properly. Check:</p>
+            <ul>
+                <li>File permissions on the plugins folder</li>
+                <li>Console for errors during shutdown</li>
+                <li>That the server is properly stopped (not killed)</li>
+                <li>The wallets.yml file exists and is writable</li>
+            </ul>
+
+            <h3>Performance issues / Server lag</h3>
+            <p><strong>Optimization tips:</strong></p>
+            <ul>
+                <li>Reduce number of enabled cryptocurrencies in config</li>
+                <li>Increase price cache duration</li>
+                <li>Reduce chart retention points</li>
+                <li>Increase chart sample interval</li>
+                <li>Set API retry to 0</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Advanced Topics</h2>
+
+            <h3>Can I integrate this with other plugins?</h3>
+            <p>Yes! See the <a href="api.html">API & Developer Guide</a> for information on integrating with CryptocurrencyMC. 
+               You can also use PlaceholderAPI placeholders in other plugins.</p>
+
+            <h3>Can I add custom cryptocurrencies?</h3>
+            <p>You can only add cryptocurrencies that are available on CoinGecko. The plugin fetches real market data, 
+               so custom/fictional currencies aren't supported.</p>
+
+            <h3>Can I change the currency format?</h3>
+            <p>Yes! Edit the placeholder formats in config.yml:</p>
+            <pre><code>placeholders:
+  format:
+    money: "#,##0.00"      # USD format
+    quantity: "#,##0.####"  # Crypto amount format</code></pre>
+
+            <h3>Can I use this plugin offline?</h3>
+            <p>No, an internet connection is required to fetch real-time cryptocurrency prices from CoinGecko. 
+               Without internet, price fetching will fail and trading will not work.</p>
+
+            <h3>Is there a limit to how much crypto a player can own?</h3>
+            <p>No hard limit is enforced by the plugin. However, be aware that very large numbers may have 
+               floating-point precision issues (values are stored as doubles).</p>
+
+            <h3>Can I run multiple servers with shared wallets?</h3>
+            <p>No, wallet data is stored locally in each server's wallets.yml file. Shared wallet support 
+               (via MySQL) could be added in a future version.</p>
+        </section>
+
+        <section class="section">
+            <h2>Security & Privacy</h2>
+
+            <h3>Is my server data sent anywhere?</h3>
+            <p>The plugin only sends HTTP requests to CoinGecko's public API to fetch cryptocurrency prices. 
+               No player data, server information, or wallet balances are transmitted.</p>
+
+            <h3>Are there any security risks?</h3>
+            <p>As with any plugin, risks exist if:</p>
+            <ul>
+                <li>You grant admin permissions to untrusted players</li>
+                <li>Your server files (including wallets.yml) are not properly secured</li>
+                <li>You don't keep the plugin updated</li>
+            </ul>
+            <p>Follow standard Minecraft server security practices.</p>
+
+            <h3>Can players exploit the economy?</h3>
+            <p>The plugin includes checks to prevent common exploits:</p>
+            <ul>
+                <li>Balance checks before all operations</li>
+                <li>No negative amounts allowed</li>
+                <li>Transaction logging for audit trails</li>
+                <li>Atomic operations to prevent race conditions</li>
+            </ul>
+            <p>However, always monitor your economy and review transaction logs.</p>
+        </section>
+
+        <section class="section">
+            <h2>Support & Contribution</h2>
+
+            <h3>I found a bug. Where do I report it?</h3>
+            <p>Please report bugs on the GitHub repository:</p>
+            <ul>
+                <li><a href="https://github.com/MatisseAD/CryptocurrencyMC/issues">GitHub Issues</a></li>
+            </ul>
+            <p>Include:</p>
+            <ul>
+                <li>Minecraft version</li>
+                <li>Plugin version</li>
+                <li>Error messages from console</li>
+                <li>Steps to reproduce the bug</li>
+            </ul>
+
+            <h3>Can I request a feature?</h3>
+            <p>Yes! Open a feature request on GitHub Issues. Popular requests will be considered for future versions.</p>
+
+            <h3>Can I contribute to the project?</h3>
+            <p>Absolutely! The project is open-source. You can:</p>
+            <ul>
+                <li>Submit pull requests on GitHub</li>
+                <li>Improve documentation</li>
+                <li>Report bugs and suggest features</li>
+                <li>Help other users in discussions</li>
+            </ul>
+
+            <h3>Where can I get help?</h3>
+            <ul>
+                <li>Read this documentation thoroughly</li>
+                <li>Check GitHub Issues for similar problems</li>
+                <li>Open a new issue if your problem isn't covered</li>
+                <li>Include relevant logs and configuration</li>
+            </ul>
+
+            <h3>Is there a Discord server?</h3>
+            <p>Check the GitHub repository for the latest community links and support channels.</p>
+        </section>
+
+        <section class="section">
+            <h2>Future Plans</h2>
+            <p>Features planned for future versions:</p>
+            <ul>
+                <li>Custom exchange rate multipliers</li>
+                <li>Transaction fees configuration</li>
+                <li>MySQL/database support for shared wallets</li>
+                <li>Custom events API for developers</li>
+                <li>More detailed statistics and analytics</li>
+                <li>Trading limits and cooldowns</li>
+                <li>Multi-language support</li>
+                <li>Advanced chart visualizations</li>
+                <li>Portfolio alerts and notifications</li>
+                <li>Integration with more economy plugins</li>
+            </ul>
+            <div class="alert alert-info">
+                <strong>💡 Want to see a specific feature?</strong> Request it on 
+                <a href="https://github.com/MatisseAD/CryptocurrencyMC/issues" style="color: var(--primary-color);">GitHub Issues</a>!
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>CryptocurrencyMC Plugin Documentation</p>
+        <p>Created by <a href="https://github.com/MatisseAD">MatisseAD</a> | 
+           <a href="https://github.com/MatisseAD/CryptocurrencyMC">GitHub Repository</a></p>
+    </footer>
+</body>
+</html>
