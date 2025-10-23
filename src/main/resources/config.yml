@@ -36,18 +36,21 @@ messages:
     price: "&eUsage: /{label} price <symbol...>"
     trade: "&eUsage: /{label} {sub} <symbol> <amount>"
     balance: "&eUsage: /{label} balance <player>"
-    convert: "&eUsage: /{label} convert <symbol> <symbol2> <amount> &7(placeholder)"
-    edit: "&eUsage: /{label} {sub} <player> <symbol> <amount> &7(placeholder)"
-    giveall: "&eUsage: /{label} giveall <symbol> <amount> &7(placeholder)"
-    history: "&eUsage: /{label} history [player] &7(placeholder)"
+    transfer: "&eUsage: /{label} transfer <player> <symbol> <amount>"
+    convert: "&eUsage: /{label} convert <symbol> <symbol2> <amount>"
+    edit: "&eUsage: /{label} {sub} <player> <symbol> <amount>"
+    giveall: "&eUsage: /{label} giveall <symbol> <amount>"
+    history: "&eUsage: /{label} history [player] [limit]"
     chart: "&eUsage: /{label} chart <symbol> [points] [range]"
-    api: "&eUsage: /{label} api <status|refresh> &7(placeholder)"
+    api: "&eUsage: /{label} api <status|refresh>"
+    api.refresh: "&eUsage: /{label} api refresh <symbol>"
   price:
     error: "&cError fetching {symbol} price: {error}"
   chart:
     hydrating: "&7Fetching price history for &e{symbol}&7... Try again in a few seconds."
   top:
-    placeholder: "&eTop 5 investors: &7(placeholder)"
+    header: "&eTop {limit} investors:"
+    empty: "&7No investors found."
   reload:
     ok: "&aConfiguration reloaded."
   balance:
@@ -66,3 +69,34 @@ messages:
       success: "&aSale: &f{amount} {symbol} &7(+${usd})"
       failed: "&cSale failed: {error}"
       simulated: "&eSimulated sale: &f{amount} {symbol} &7(~${usd})"
+  transfer:
+    self: "&cYou cannot transfer to yourself."
+    notenough: "&cYou don't have enough {symbol}. Owned: {owned}"
+    success: "&aTransfer: &f{amount} {symbol} &7→ &f{player}"
+    failed: "&cTransfer failed."
+  convert:
+    notenough: "&cYou don't have enough {symbol}. Owned: {owned}"
+    invalid_target: "&cCannot convert to {symbol}."
+    success: "&aConversion: &f{from_amount} {from_symbol} &7→ &f{to_amount} {to_symbol}"
+    failed: "&cConversion failed."
+    error: "&cError during conversion: {error}"
+  admin:
+    set:
+      success: "&aSet: &f{player} &7now has &f{amount} {symbol}"
+    add:
+      success: "&aAdded: &f{amount} {symbol} &7to &f{player}"
+    remove:
+      success: "&aRemoved: &f{amount} {symbol} &7from &f{player}"
+      failed: "&c{player} doesn't have enough {symbol}."
+  giveall:
+    received: "&aAirdrop: You received &f{amount} {symbol}!"
+    success: "&aAirdrop: &f{amount} {symbol} &7distributed to &f{count} &7player(s)"
+  history:
+    header: "&eHistory of &f{player} &7({count} recent transactions):"
+    empty: "&7No transactions found."
+  api:
+    status: "&7API Status: {status}{status_name}"
+    refresh: "&7Refreshing &e{symbol} &7..."
+    refresh:
+      success: "&a{symbol} &7= &a${price}"
+      failed: "&cRefresh failed: {error}"

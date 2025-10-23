@@ -106,6 +106,8 @@ public class CryptoCommand implements CommandExecutor, TabCompleter {
                                         EconomyResponse r = econ.withdrawPlayer(player, usd);
                                         if (r != null && r.transactionSuccess()) {
                                             wm2.add(player.getUniqueId(), symUp, amount);
+                                            plugin.getTransactionManager().record(player.getUniqueId(), "BUY", 
+                                                String.format("Bought %s %s for $%s", amtStr, symUp, usdStr));
                                             sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("trade.buy.success", "&aAchat: &f{amount} {symbol} &7(-${usd})", java.util.Map.of(
                                                     "amount", amtStr,
                                                     "symbol", symUp,
@@ -136,6 +138,8 @@ public class CryptoCommand implements CommandExecutor, TabCompleter {
                                         if (ok) {
                                             EconomyResponse r = econ.depositPlayer(player, usd);
                                             if (r != null && r.transactionSuccess()) {
+                                                plugin.getTransactionManager().record(player.getUniqueId(), "SELL", 
+                                                    String.format("Sold %s %s for $%s", amtStr, symUp, usdStr));
                                                 sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("trade.sell.success", "&aVente: &f{amount} {symbol} &7(+${usd})", java.util.Map.of(
                                                         "amount", amtStr,
                                                         "symbol", symUp,
@@ -183,40 +187,67 @@ public class CryptoCommand implements CommandExecutor, TabCompleter {
                 }
                 return true;
             }
-            case "transfer" -> {
-                if (!(sender instanceof Player)) { sender.sendMessage(Messages.t("player_only", "&cJoueur uniquement.")); return true; }
-                if (!sender.hasPermission("crypto.user.trade")) { sender.sendMessage(Messages.t("no_permission", "&cVous n’avez pas la permission.")); return true; }
-                sender.sendMessage("§eUsage: /" + label + " transfer <joueur> <symbole> <montant> §7(placeholder)");
-                return true;
-            }
-            case "top" -> {
-                if (!sender.hasPermission("crypto.user.top")) { sender.sendMessage(Messages.t("no_permission", "&cVous n’avez pas la permission.")); return true; }
-                sender.sendMessage(Cryptocurrency.PREFIX + Messages.t("top.placeholder", "&eTop 5 investisseurs : &7(placeholder)"));
-                return true;
-            }
-            case "convert" -> {
-                if (!(sender instanceof Player)) { sender.sendMessage(Messages.t("player_only", "&cJoueur uniquement.")); return true; }
-                if (!sender.hasPermission("crypto.user.trade")) { sender.sendMessage(Messages.t("no_permission", "&cVous n’avez pas la permission.")); return true; }
-                sender.sendMessage(Messages.f("usage.convert", "&eUsage: /{label} convert <symbole> <symbole2> <montant> &7(placeholder)", java.util.Map.of("label", label)));
-                return true;
-            }
-            case "reload" -> {
-                if (!sender.hasPermission("crypto.admin.reload")) { sender.sendMessage(Messages.t("no_permission", "&cVous n’avez pas la permission.")); return true; }
-                sender.sendMessage(Cryptocurrency.PREFIX + Messages.t("reload.ok", "&aConfiguration rechargée."));
-                return true;
-            }
-            case "set", "add", "remove" -> {
-                if (!sender.hasPermission("crypto.admin.edit")) { sender.sendMessage(Messages.t("no_permission", "&cVous n’avez pas la permission.")); return true; }
-                sender.sendMessage(Messages.f("usage.edit", "&eUsage: /{label} {sub} <joueur> <symbole> <montant> &7(placeholder)", java.util.Map.of("label", label, "sub", sub)));
-                return true;
-            }
-            case "giveall" -> {
-                if (!sender.hasPermission("crypto.admin.giveall")) { sender.sendMessage(Messages.t("no_permission", "&cVous n’avez pas la permission.")); return true; }
-                sender.sendMessage(Messages.f("usage.giveall", "&eUsage: /{label} giveall <symbole> <montant> &7(placeholder)", java.util.Map.of("label", label)));
-                return true;
-            }
+            case "transfer" -> { return handleTransfer(sender, args, label); }
+            case "top" -> { return handleTop(sender, args, label); }
+            case "convert" -> { return handleConvert(sender, args, label); }
+            case "reload" -> { return handleReload(sender); }
+            case "set", "add", "remove" -> { return handleAdminEdit(sender, args, label, sub); }
+            case "giveall" -> { return handleGiveall(sender, args, label); }
             case "history" -> {
-                sender.sendMessage(Messages.f("usage.history", "&eUsage: /{label} history [joueur] &7(placeholder)", java.util.Map.of("label", label)));
+                UUID targetUuid;
+                String targetName;
+                
+                if (args.length >= 2) {
+                    // View someone else's history
+                    if (!sender.hasPermission("crypto.admin.edit")) {
+                        sender.sendMessage(Messages.t("no_permission", "&cVous n'avez pas la permission."));
+                        return true;
+                    }
+                    OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+                    targetUuid = target.getUniqueId();
+                    targetName = args[1];
+                } else {
+                    // View own history
+                    if (!(sender instanceof Player player)) {
+                        sender.sendMessage(Messages.f("usage.history", "&eUsage: /{label} history <joueur>", 
+                            java.util.Map.of("label", label)));
+                        return true;
+                    }
+                    targetUuid = player.getUniqueId();
+                    targetName = player.getName();
+                }
+                
+                int limit = 10;
+                if (args.length >= 3) {
+                    try { limit = Math.max(1, Math.min(50, Integer.parseInt(args[2]))); } catch (Exception ignored) {}
+                }
+                
+                var txns = plugin.getTransactionManager().getRecent(targetUuid, limit);
+                
+                sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("history.header", 
+                    "&eHistorique de &f{player} &7({count} dernières transactions):", 
+                    java.util.Map.of("player", targetName, "count", String.valueOf(txns.size()))));
+                
+                if (txns.isEmpty()) {
+                    sender.sendMessage(Messages.t("history.empty", "&7Aucune transaction trouvée."));
+                    return true;
+                }
+                
+                java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm");
+                for (var txn : txns) {
+                    String time = txn.time.atZone(java.time.ZoneId.systemDefault()).format(fmt);
+                    String typeColor = switch(txn.type) {
+                        case "BUY" -> "§a";
+                        case "SELL" -> "§c";
+                        case "TRANSFER_IN" -> "§b";
+                        case "TRANSFER_OUT" -> "§e";
+                        case "CONVERT" -> "§d";
+                        case "AIRDROP" -> "§6";
+                        default -> "§7";
+                    };
+                    sender.sendMessage(String.format("§8[%s] %s%s §7- §f%s", time, typeColor, txn.type, txn.details));
+                }
+                
                 return true;
             }
             case "chart" -> {
@@ -250,7 +281,58 @@ public class CryptoCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
             case "api" -> {
-                sender.sendMessage(Messages.f("usage.api", "&eUsage: /{label} api <status|refresh> &7(placeholder)", java.util.Map.of("label", label)));
+                if (!sender.hasPermission("crypto.admin.reload")) {
+                    sender.sendMessage(Messages.t("no_permission", "&cVous n'avez pas la permission."));
+                    return true;
+                }
+                
+                if (args.length < 2) {
+                    sender.sendMessage(Messages.f("usage.api", "&eUsage: /{label} api <status|refresh>", 
+                        java.util.Map.of("label", label)));
+                    return true;
+                }
+                
+                String subCmd = args[1].toLowerCase(Locale.ROOT);
+                PriceService ps = plugin.getPriceService();
+                
+                if (subCmd.equals("status")) {
+                    var status = ps.getApiStatus();
+                    String statusColor = switch(status) {
+                        case OK -> "§a";
+                        case DEGRADED -> "§e";
+                        case DOWN -> "§c";
+                    };
+                    sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("api.status", 
+                        "&7État de l'API: {status}{status_name}", 
+                        java.util.Map.of("status", statusColor, "status_name", status.name())));
+                } else if (subCmd.equals("refresh")) {
+                    if (args.length < 3) {
+                        sender.sendMessage(Messages.f("usage.api.refresh", 
+                            "&eUsage: /{label} api refresh <symbole>", 
+                            java.util.Map.of("label", label)));
+                        return true;
+                    }
+                    String sym = args[2].toUpperCase(Locale.ROOT);
+                    ps.refresh(sym);
+                    sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("api.refresh", 
+                        "&7Rafraîchissement de &e{symbol} &7en cours...", 
+                        java.util.Map.of("symbol", sym)));
+                    
+                    ps.getPriceUsd(sym).thenAccept(price -> runSync(() -> {
+                        sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("api.refresh.success", 
+                            "&a{symbol} &7= &a${price}", 
+                            java.util.Map.of("symbol", sym, "price", fmt2(price))));
+                    })).exceptionally(ex -> {
+                        runSync(() -> sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("api.refresh.failed", 
+                            "&cÉchec du rafraîchissement: {error}", 
+                            java.util.Map.of("error", ex.getMessage() == null ? "" : ex.getMessage()))));
+                        return null;
+                    });
+                } else {
+                    sender.sendMessage(Messages.f("usage.api", "&eUsage: /{label} api <status|refresh>", 
+                        java.util.Map.of("label", label)));
+                }
+                
                 return true;
             }
             case "market" -> {
@@ -361,5 +443,364 @@ public class CryptoCommand implements CommandExecutor, TabCompleter {
 
     private void runSync(Runnable r) {
         Bukkit.getScheduler().runTask(plugin, r);
+    }
+    
+    /* ===================== Command Implementations ===================== */
+    
+    /**
+     * Handles the transfer command - transfers crypto between players
+     */
+    private boolean handleTransfer(CommandSender sender, String[] args, String label) {
+        if (!(sender instanceof Player player)) { 
+            sender.sendMessage(Messages.t("player_only", "&cJoueur uniquement.")); 
+            return true; 
+        }
+        if (!sender.hasPermission("crypto.user.trade")) { 
+            sender.sendMessage(Messages.t("no_permission", "&cVous n'avez pas la permission.")); 
+            return true; 
+        }
+        if (args.length < 4) { 
+            sender.sendMessage(Messages.f("usage.transfer", "&eUsage: /{label} transfer <joueur> <symbole> <montant>", java.util.Map.of("label", label))); 
+            return true; 
+        }
+        
+        String targetName = args[1];
+        String sym = args[2].toUpperCase(Locale.ROOT);
+        double amount;
+        try { 
+            amount = Double.parseDouble(args[3]); 
+        } catch (Exception e) { 
+            sender.sendMessage(Messages.t("invalid_amount", "&cMontant invalide.")); 
+            return true; 
+        }
+        
+        if (amount <= 0) {
+            sender.sendMessage(Messages.t("invalid_amount", "&cMontant invalide."));
+            return true;
+        }
+        
+        OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
+        UUID senderUuid = player.getUniqueId();
+        UUID targetUuid = target.getUniqueId();
+        
+        if (senderUuid.equals(targetUuid)) {
+            sender.sendMessage(Cryptocurrency.PREFIX + Messages.t("transfer.self", "&cVous ne pouvez pas vous transférer à vous-même."));
+            return true;
+        }
+        
+        WalletManager wm = plugin.getWalletManager();
+        double owned = wm.get(senderUuid, sym);
+        
+        if (owned < amount) {
+            sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("transfer.notenough", "&cVous n'avez pas assez de {symbol}. Possédé: {owned}", 
+                java.util.Map.of("symbol", sym, "owned", fmt4(owned))));
+            return true;
+        }
+        
+        boolean removed = wm.remove(senderUuid, sym, amount);
+        if (removed) {
+            wm.add(targetUuid, sym, amount);
+            plugin.getTransactionManager().record(senderUuid, "TRANSFER_OUT", 
+                String.format("Sent %s %s to %s", fmt4(amount), sym, targetName));
+            plugin.getTransactionManager().record(targetUuid, "TRANSFER_IN", 
+                String.format("Received %s %s from %s", fmt4(amount), sym, player.getName()));
+            
+            sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("transfer.success", 
+                "&aTransfert: &f{amount} {symbol} &7→ &f{player}", 
+                java.util.Map.of("amount", fmt4(amount), "symbol", sym, "player", targetName)));
+        } else {
+            sender.sendMessage(Cryptocurrency.PREFIX + Messages.t("transfer.failed", "&cÉchec du transfert."));
+        }
+        return true;
+    }
+    
+    /**
+     * Handles the top command - shows leaderboard of investors
+     */
+    private boolean handleTop(CommandSender sender, String[] args, String label) {
+        if (!sender.hasPermission("crypto.user.top")) { 
+            sender.sendMessage(Messages.t("no_permission", "&cVous n'avez pas la permission.")); 
+            return true; 
+        }
+        
+        int limit = 10;
+        if (args.length >= 2) {
+            try { 
+                limit = Math.max(1, Math.min(20, Integer.parseInt(args[1]))); 
+            } catch (Exception ignored) {}
+        }
+        
+        WalletManager wm = plugin.getWalletManager();
+        PriceService ps = plugin.getPriceService();
+        
+        var top = wm.topByUsdValue(wallet -> {
+            double sum = 0.0;
+            for (var e : wallet.entrySet()) {
+                Double price = ps.getCachedUsd(e.getKey());
+                if (price == null) { 
+                    ps.refreshAsync(e.getKey()); 
+                    continue; 
+                }
+                sum += price * e.getValue();
+            }
+            return sum;
+        }, limit);
+        
+        sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("top.header", "&eTop {limit} investisseurs:", 
+            java.util.Map.of("limit", String.valueOf(Math.min(limit, top.size())))));
+        
+        int rank = 1;
+        for (var entry : top) {
+            if (entry.getValue() < 0.01) continue;
+            String playerName = Bukkit.getOfflinePlayer(entry.getKey()).getName();
+            if (playerName == null) playerName = entry.getKey().toString().substring(0, 8);
+            sender.sendMessage(String.format("§7#%d §f%s §8- §a$%s", rank, playerName, fmt2(entry.getValue())));
+            rank++;
+        }
+        
+        if (rank == 1) {
+            sender.sendMessage(Messages.t("top.empty", "&7Aucun investisseur trouvé."));
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Handles the convert command - converts between cryptocurrencies
+     */
+    private boolean handleConvert(CommandSender sender, String[] args, String label) {
+        if (!(sender instanceof Player player)) { 
+            sender.sendMessage(Messages.t("player_only", "&cJoueur uniquement.")); 
+            return true; 
+        }
+        if (!sender.hasPermission("crypto.user.trade")) { 
+            sender.sendMessage(Messages.t("no_permission", "&cVous n'avez pas la permission.")); 
+            return true; 
+        }
+        if (args.length < 4) {
+            sender.sendMessage(Messages.f("usage.convert", "&eUsage: /{label} convert <symbole> <symbole2> <montant>", java.util.Map.of("label", label)));
+            return true;
+        }
+        
+        String fromSym = args[1].toUpperCase(Locale.ROOT);
+        String toSym = args[2].toUpperCase(Locale.ROOT);
+        double amount;
+        try { 
+            amount = Double.parseDouble(args[3]); 
+        } catch (Exception e) {
+            sender.sendMessage(Messages.t("invalid_amount", "&cMontant invalide."));
+            return true;
+        }
+        
+        if (amount <= 0) {
+            sender.sendMessage(Messages.t("invalid_amount", "&cMontant invalide."));
+            return true;
+        }
+        
+        WalletManager wm = plugin.getWalletManager();
+        UUID uuid = player.getUniqueId();
+        double owned = wm.get(uuid, fromSym);
+        
+        if (owned < amount) {
+            sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("convert.notenough", 
+                "&cVous n'avez pas assez de {symbol}. Possédé: {owned}", 
+                java.util.Map.of("symbol", fromSym, "owned", fmt4(owned))));
+            return true;
+        }
+        
+        PriceService ps = plugin.getPriceService();
+        CompletableFuture<Double> fromPriceFuture = ps.getPriceUsd(fromSym);
+        CompletableFuture<Double> toPriceFuture = ps.getPriceUsd(toSym);
+        
+        CompletableFuture.allOf(fromPriceFuture, toPriceFuture)
+            .thenRun(() -> runSync(() -> {
+                double fromPrice = fromPriceFuture.getNow(1.0);
+                double toPrice = toPriceFuture.getNow(1.0);
+                
+                if (toPrice == 0.0) {
+                    sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("convert.invalid_target", 
+                        "&cImpossible de convertir vers {symbol}.", 
+                        java.util.Map.of("symbol", toSym)));
+                    return;
+                }
+                
+                double usdValue = amount * fromPrice;
+                double convertedAmount = usdValue / toPrice;
+                
+                boolean removed = wm.remove(uuid, fromSym, amount);
+                if (removed) {
+                    wm.add(uuid, toSym, convertedAmount);
+                    plugin.getTransactionManager().record(uuid, "CONVERT", 
+                        String.format("Converted %s %s to %s %s", fmt4(amount), fromSym, fmt4(convertedAmount), toSym));
+                    
+                    sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("convert.success", 
+                        "&aConversion: &f{from_amount} {from_symbol} &7→ &f{to_amount} {to_symbol}", 
+                        java.util.Map.of(
+                            "from_amount", fmt4(amount),
+                            "from_symbol", fromSym,
+                            "to_amount", fmt4(convertedAmount),
+                            "to_symbol", toSym
+                        )));
+                } else {
+                    sender.sendMessage(Cryptocurrency.PREFIX + Messages.t("convert.failed", "&cÉchec de la conversion."));
+                }
+            }))
+            .exceptionally(ex -> {
+                runSync(() -> sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("convert.error", 
+                    "&cErreur lors de la conversion: {error}", 
+                    java.util.Map.of("error", ex.getMessage() == null ? "" : ex.getMessage()))));
+                return null;
+            });
+        
+        return true;
+    }
+    
+    /**
+     * Handles admin commands: set, add, remove
+     */
+    private boolean handleAdminEdit(CommandSender sender, String[] args, String label, String sub) {
+        if (!sender.hasPermission("crypto.admin.edit")) { 
+            sender.sendMessage(Messages.t("no_permission", "&cVous n'avez pas la permission.")); 
+            return true; 
+        }
+        
+        if (args.length < 4) {
+            sender.sendMessage(Messages.f("usage.edit", "&eUsage: /{label} {sub} <joueur> <symbole> <montant>", 
+                java.util.Map.of("label", label, "sub", sub)));
+            return true;
+        }
+        
+        String targetName = args[1];
+        String sym = args[2].toUpperCase(Locale.ROOT);
+        double amount;
+        try { 
+            amount = Double.parseDouble(args[3]); 
+        } catch (Exception e) {
+            sender.sendMessage(Messages.t("invalid_amount", "&cMontant invalide."));
+            return true;
+        }
+        
+        if (amount < 0) {
+            sender.sendMessage(Messages.t("invalid_amount", "&cMontant invalide."));
+            return true;
+        }
+        
+        OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
+        UUID targetUuid = target.getUniqueId();
+        WalletManager wm = plugin.getWalletManager();
+        
+        switch (sub) {
+            case "set" -> {
+                wm.set(targetUuid, sym, amount);
+                plugin.getTransactionManager().record(targetUuid, "ADMIN_SET", 
+                    String.format("Admin set %s %s by %s", fmt4(amount), sym, sender.getName()));
+                sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("admin.set.success", 
+                    "&aSet: &f{player} &7now has &f{amount} {symbol}", 
+                    java.util.Map.of("player", targetName, "amount", fmt4(amount), "symbol", sym)));
+            }
+            case "add" -> {
+                wm.add(targetUuid, sym, amount);
+                plugin.getTransactionManager().record(targetUuid, "ADMIN_ADD", 
+                    String.format("Admin added %s %s by %s", fmt4(amount), sym, sender.getName()));
+                sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("admin.add.success", 
+                    "&aAdded: &f{amount} {symbol} &7to &f{player}", 
+                    java.util.Map.of("player", targetName, "amount", fmt4(amount), "symbol", sym)));
+            }
+            case "remove" -> {
+                boolean removed = wm.remove(targetUuid, sym, amount);
+                if (removed) {
+                    plugin.getTransactionManager().record(targetUuid, "ADMIN_REMOVE", 
+                        String.format("Admin removed %s %s by %s", fmt4(amount), sym, sender.getName()));
+                    sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("admin.remove.success", 
+                        "&aRemoved: &f{amount} {symbol} &7from &f{player}", 
+                        java.util.Map.of("player", targetName, "amount", fmt4(amount), "symbol", sym)));
+                } else {
+                    sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("admin.remove.failed", 
+                        "&c{player} n'a pas assez de {symbol}.", 
+                        java.util.Map.of("player", targetName, "symbol", sym)));
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Handles the giveall command - distributes crypto to all online players
+     */
+    private boolean handleGiveall(CommandSender sender, String[] args, String label) {
+        if (!sender.hasPermission("crypto.admin.giveall")) { 
+            sender.sendMessage(Messages.t("no_permission", "&cVous n'avez pas la permission.")); 
+            return true; 
+        }
+        
+        if (args.length < 3) {
+            sender.sendMessage(Messages.f("usage.giveall", "&eUsage: /{label} giveall <symbole> <montant>", 
+                java.util.Map.of("label", label)));
+            return true;
+        }
+        
+        String sym = args[1].toUpperCase(Locale.ROOT);
+        double amount;
+        try { 
+            amount = Double.parseDouble(args[2]); 
+        } catch (Exception e) {
+            sender.sendMessage(Messages.t("invalid_amount", "&cMontant invalide."));
+            return true;
+        }
+        
+        if (amount <= 0) {
+            sender.sendMessage(Messages.t("invalid_amount", "&cMontant invalide."));
+            return true;
+        }
+        
+        WalletManager wm = plugin.getWalletManager();
+        int count = 0;
+        
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            wm.add(onlinePlayer.getUniqueId(), sym, amount);
+            plugin.getTransactionManager().record(onlinePlayer.getUniqueId(), "AIRDROP", 
+                String.format("Received %s %s from airdrop by %s", fmt4(amount), sym, sender.getName()));
+            
+            onlinePlayer.sendMessage(Cryptocurrency.PREFIX + Messages.f("giveall.received", 
+                "&aAirdrop: Vous avez reçu &f{amount} {symbol}!", 
+                java.util.Map.of("amount", fmt4(amount), "symbol", sym)));
+            count++;
+        }
+        
+        sender.sendMessage(Cryptocurrency.PREFIX + Messages.f("giveall.success", 
+            "&aAirdrop: &f{amount} {symbol} &7distribué à &f{count} &7joueur(s)", 
+            java.util.Map.of("amount", fmt4(amount), "symbol", sym, "count", String.valueOf(count))));
+        
+        return true;
+    }
+    
+    /**
+     * Handles the reload command - reloads configuration
+     */
+    private boolean handleReload(CommandSender sender) {
+        if (!sender.hasPermission("crypto.admin.reload")) { 
+            sender.sendMessage(Messages.t("no_permission", "&cVous n'avez pas la permission.")); 
+            return true; 
+        }
+        
+        plugin.reloadConfig();
+        fr.jachou.cryptocurrency.util.Messages.init(plugin);
+        
+        String cfgPrefix = plugin.getConfig().getString("messages.prefix", "&6[&eCrypto&6] &r");
+        Cryptocurrency.PREFIX = fr.jachou.cryptocurrency.util.Messages.color(cfgPrefix);
+        
+        if (plugin.getTimeseriesService() != null) {
+            int retention = plugin.getConfig().getInt("chart.retention_points", 360);
+            int sample = plugin.getConfig().getInt("chart.sample_seconds", 60);
+            plugin.getTimeseriesService().configure(retention, sample);
+            
+            java.util.List<String> enabled = plugin.getConfig().getStringList("market.enabled_symbols");
+            if (enabled == null || enabled.isEmpty()) enabled = java.util.Arrays.asList("BTC","ETH","SOL","DOGE");
+            plugin.getTimeseriesService().startSampler(enabled);
+        }
+        
+        sender.sendMessage(Cryptocurrency.PREFIX + Messages.t("reload.ok", "&aConfiguration rechargée."));
+        return true;
     }
 }

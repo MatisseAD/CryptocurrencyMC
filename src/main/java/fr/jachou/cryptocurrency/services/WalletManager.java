@@ -1,10 +1,13 @@
 package fr.jachou.cryptocurrency.services;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Minimal wallet manager. In-memory only for now.
+ * Wallet manager with persistence support.
  * Map: player UUID -> Map<symbol, amount>
  */
 public class WalletManager {
@@ -43,5 +46,68 @@ public class WalletManager {
         list.sort((a,b) -> Double.compare(b.getValue(), a.getValue()));
         if (list.size() > limit) return list.subList(0, limit);
         return list;
+    }
+    
+    public Map<UUID, Map<String, Double>> getAllWallets() {
+        return wallets;
+    }
+    
+    /**
+     * Load wallets from YAML file
+     */
+    public void loadFromFile(File file) {
+        if (!file.exists()) return;
+        
+        try {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+            var section = config.getConfigurationSection("wallets");
+            if (section == null) return;
+            
+            for (String uuidStr : section.getKeys(false)) {
+                try {
+                    UUID uuid = UUID.fromString(uuidStr);
+                    var symbolSection = section.getConfigurationSection(uuidStr);
+                    if (symbolSection == null) continue;
+                    
+                    Map<String, Double> wallet = getWallet(uuid);
+                    for (String symbol : symbolSection.getKeys(false)) {
+                        double amount = symbolSection.getDouble(symbol, 0.0);
+                        if (amount > 0.0) {
+                            wallet.put(symbol.toUpperCase(Locale.ROOT), amount);
+                        }
+                    }
+                } catch (IllegalArgumentException ignored) {
+                    // Invalid UUID, skip
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Save wallets to YAML file
+     */
+    public void saveToFile(File file) {
+        try {
+            YamlConfiguration config = new YamlConfiguration();
+            
+            for (Map.Entry<UUID, Map<String, Double>> entry : wallets.entrySet()) {
+                String uuidStr = entry.getKey().toString();
+                Map<String, Double> wallet = entry.getValue();
+                
+                for (Map.Entry<String, Double> symbolEntry : wallet.entrySet()) {
+                    String symbol = symbolEntry.getKey();
+                    double amount = symbolEntry.getValue();
+                    if (amount > 0.0) {
+                        config.set("wallets." + uuidStr + "." + symbol, amount);
+                    }
+                }
+            }
+            
+            config.save(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
