@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permissions Reference - CryptocurrencyMC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">₿</span>
+                <span>CryptocurrencyMC</span>
+            </a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="commands.html">Commands</a></li>
+                <li><a href="permissions.html" class="active">Permissions</a></li>
+                <li><a href="configuration.html">Configuration</a></li>
+                <li><a href="api.html">API</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <h2>Permissions Reference</h2>
+            <p>Complete guide to all permission nodes in CryptocurrencyMC. Configure these in your permission plugin 
+               (e.g., LuckPerms, PermissionsEx, GroupManager).</p>
+        </section>
+
+        <section class="section">
+            <h2>All Permissions</h2>
+            <table>
+                <tr>
+                    <th>Permission Node</th>
+                    <th>Description</th>
+                    <th>Default</th>
+                </tr>
+                <tr>
+                    <td><code>crypto.user.price</code></td>
+                    <td>View cryptocurrency prices</td>
+                    <td><span class="badge badge-success">true</span></td>
+                </tr>
+                <tr>
+                    <td><code>crypto.user.trade</code></td>
+                    <td>Buy, sell, transfer, and convert crypto</td>
+                    <td><span class="badge badge-success">true</span></td>
+                </tr>
+                <tr>
+                    <td><code>crypto.user.balance</code></td>
+                    <td>View wallet balance and history</td>
+                    <td><span class="badge badge-success">true</span></td>
+                </tr>
+                <tr>
+                    <td><code>crypto.user.top</code></td>
+                    <td>View leaderboard of top investors</td>
+                    <td><span class="badge badge-success">true</span></td>
+                </tr>
+                <tr>
+                    <td><code>crypto.user.chart</code></td>
+                    <td>View price charts</td>
+                    <td><span class="badge badge-success">true</span></td>
+                </tr>
+                <tr>
+                    <td><code>crypto.user.market</code></td>
+                    <td>Access the market GUI</td>
+                    <td><span class="badge badge-success">true</span></td>
+                </tr>
+                <tr>
+                    <td><code>crypto.admin.reload</code></td>
+                    <td>Reload config and manage API</td>
+                    <td><span class="badge badge-warning">op</span></td>
+                </tr>
+                <tr>
+                    <td><code>crypto.admin.edit</code></td>
+                    <td>Modify player wallets (set/add/remove)</td>
+                    <td><span class="badge badge-warning">op</span></td>
+                </tr>
+                <tr>
+                    <td><code>crypto.admin.giveall</code></td>
+                    <td>Distribute crypto to all players</td>
+                    <td><span class="badge badge-warning">op</span></td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>User Permissions</h2>
+            <p>These permissions control player access to basic cryptocurrency features.</p>
+
+            <h3>crypto.user.price</h3>
+            <p><strong>Default:</strong> <span class="badge badge-success">true</span></p>
+            <p><strong>Commands:</strong></p>
+            <ul>
+                <li><code>/crypto price [symbol]</code></li>
+            </ul>
+            <p><strong>Description:</strong> Allows players to view current cryptocurrency prices. 
+               This is a read-only permission with no economic impact.</p>
+
+            <h3>crypto.user.trade</h3>
+            <p><strong>Default:</strong> <span class="badge badge-success">true</span></p>
+            <p><strong>Commands:</strong></p>
+            <ul>
+                <li><code>/crypto buy [symbol] [amount]</code></li>
+                <li><code>/crypto sell [symbol] [amount]</code></li>
+                <li><code>/crypto transfer [player] [symbol] [amount]</code></li>
+                <li><code>/crypto convert [from] [to] [amount]</code></li>
+            </ul>
+            <p><strong>Description:</strong> The main trading permission. Controls all buying, selling, 
+               and peer-to-peer trading functions. This is essential for an active crypto economy.</p>
+            <div class="alert alert-info">
+                <strong>💡 Note:</strong> This permission is required for players to participate in the economy. 
+                Without it, they can only view prices and balances.
+            </div>
+
+            <h3>crypto.user.balance</h3>
+            <p><strong>Default:</strong> <span class="badge badge-success">true</span></p>
+            <p><strong>Commands:</strong></p>
+            <ul>
+                <li><code>/crypto balance [player]</code></li>
+                <li><code>/crypto history [player] [limit]</code></li>
+            </ul>
+            <p><strong>Description:</strong> Allows viewing wallet balances and transaction history. 
+               Players can view their own data by default, but need admin permissions to view others.</p>
+
+            <h3>crypto.user.top</h3>
+            <p><strong>Default:</strong> <span class="badge badge-success">true</span></p>
+            <p><strong>Commands:</strong></p>
+            <ul>
+                <li><code>/crypto top [limit]</code></li>
+            </ul>
+            <p><strong>Description:</strong> Allows viewing the leaderboard of top cryptocurrency investors. 
+               Great for creating competition among players!</p>
+
+            <h3>crypto.user.chart</h3>
+            <p><strong>Default:</strong> <span class="badge badge-success">true</span></p>
+            <p><strong>Commands:</strong></p>
+            <ul>
+                <li><code>/crypto chart [symbol]</code></li>
+            </ul>
+            <p><strong>Description:</strong> Allows viewing ASCII price charts in chat. 
+               Helps players make informed trading decisions.</p>
+
+            <h3>crypto.user.market</h3>
+            <p><strong>Default:</strong> <span class="badge badge-success">true</span></p>
+            <p><strong>Commands:</strong></p>
+            <ul>
+                <li><code>/crypto market</code></li>
+            </ul>
+            <p><strong>Description:</strong> Allows access to the interactive market GUI with real-time prices, 
+               charts, and click-to-trade functionality.</p>
+        </section>
+
+        <section class="section">
+            <h2>Admin Permissions</h2>
+            <p>These permissions are restricted to operators by default and provide administrative control.</p>
+
+            <h3>crypto.admin.reload</h3>
+            <p><strong>Default:</strong> <span class="badge badge-warning">op</span></p>
+            <p><strong>Commands:</strong></p>
+            <ul>
+                <li><code>/crypto reload</code></li>
+                <li><code>/crypto api status</code></li>
+                <li><code>/crypto api refresh [symbol]</code></li>
+            </ul>
+            <p><strong>Description:</strong> Allows reloading the plugin configuration and managing API connections. 
+               Use this to apply config changes without restarting the server.</p>
+
+            <h3>crypto.admin.edit</h3>
+            <p><strong>Default:</strong> <span class="badge badge-warning">op</span></p>
+            <p><strong>Commands:</strong></p>
+            <ul>
+                <li><code>/crypto set [player] [symbol] [amount]</code></li>
+                <li><code>/crypto add [player] [symbol] [amount]</code></li>
+                <li><code>/crypto remove [player] [symbol] [amount]</code></li>
+            </ul>
+            <p><strong>Description:</strong> Allows direct modification of player cryptocurrency wallets. 
+               Useful for resolving issues, compensating players, or manual economic adjustments.</p>
+            <div class="alert alert-warning">
+                <strong>⚠️ Warning:</strong> This is a powerful permission. Only grant to trusted staff members 
+                as it allows complete control over player balances.
+            </div>
+
+            <h3>crypto.admin.giveall</h3>
+            <p><strong>Default:</strong> <span class="badge badge-warning">op</span></p>
+            <p><strong>Commands:</strong></p>
+            <ul>
+                <li><code>/crypto giveall [symbol] [amount]</code></li>
+            </ul>
+            <p><strong>Description:</strong> Allows distributing cryptocurrency to all online players (airdrops). 
+               Great for events, promotions, or economy boosts.</p>
+            <div class="alert alert-warning">
+                <strong>⚠️ Warning:</strong> This affects all online players and can significantly impact 
+                your server's economy. Use with caution.
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Permission Setup Examples</h2>
+
+            <h3>LuckPerms</h3>
+            <p>Examples using LuckPerms commands:</p>
+
+            <h4>Give all user permissions to a group:</h4>
+            <pre><code>/lp group default permission set crypto.user.price true
+/lp group default permission set crypto.user.trade true
+/lp group default permission set crypto.user.balance true
+/lp group default permission set crypto.user.top true
+/lp group default permission set crypto.user.chart true
+/lp group default permission set crypto.user.market true</code></pre>
+
+            <h4>Give admin permissions to moderators:</h4>
+            <pre><code>/lp group moderator permission set crypto.admin.reload true
+/lp group moderator permission set crypto.admin.edit true</code></pre>
+
+            <h4>Give airdrop permission to admin group:</h4>
+            <pre><code>/lp group admin permission set crypto.admin.giveall true</code></pre>
+
+            <h4>Give specific player full access:</h4>
+            <pre><code>/lp user Steve permission set crypto.* true</code></pre>
+
+            <h3>PermissionsEx</h3>
+            <p>Examples using PermissionsEx commands:</p>
+
+            <h4>Set group permissions:</h4>
+            <pre><code>/pex group default add crypto.user.*
+/pex group admin add crypto.admin.*</code></pre>
+
+            <h4>Set user permissions:</h4>
+            <pre><code>/pex user Steve add crypto.admin.edit</code></pre>
+
+            <h3>Configuration File (permissions.yml)</h3>
+            <p>If using a permissions plugin with YAML config:</p>
+            <pre><code>groups:
+  default:
+    permissions:
+      - crypto.user.price
+      - crypto.user.trade
+      - crypto.user.balance
+      - crypto.user.top
+      - crypto.user.chart
+      - crypto.user.market
+  
+  moderator:
+    permissions:
+      - crypto.admin.reload
+      - crypto.admin.edit
+  
+  admin:
+    permissions:
+      - crypto.*</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Permission Wildcards</h2>
+            <p>You can use wildcards to grant multiple permissions at once:</p>
+            
+            <table>
+                <tr>
+                    <th>Wildcard</th>
+                    <th>Grants</th>
+                </tr>
+                <tr>
+                    <td><code>crypto.*</code></td>
+                    <td>All permissions (user and admin)</td>
+                </tr>
+                <tr>
+                    <td><code>crypto.user.*</code></td>
+                    <td>All user permissions</td>
+                </tr>
+                <tr>
+                    <td><code>crypto.admin.*</code></td>
+                    <td>All admin permissions</td>
+                </tr>
+            </table>
+
+            <div class="alert alert-info">
+                <strong>💡 Tip:</strong> Most permission plugins support wildcards. 
+                Use <code>crypto.user.*</code> for regular players and <code>crypto.*</code> for admins.
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Recommended Permission Setups</h2>
+
+            <h3>For Regular Players</h3>
+            <p>Give these permissions to your default player group:</p>
+            <pre><code>crypto.user.price
+crypto.user.trade
+crypto.user.balance
+crypto.user.top
+crypto.user.chart
+crypto.user.market</code></pre>
+            <p>Or simply: <code>crypto.user.*</code></p>
+
+            <h3>For VIP Players</h3>
+            <p>VIP players can have the same as regular players, or add custom features through other plugins 
+               using PlaceholderAPI integration.</p>
+
+            <h3>For Moderators</h3>
+            <p>Moderators should have user permissions plus:</p>
+            <pre><code>crypto.user.*
+crypto.admin.reload</code></pre>
+            <p>This allows them to reload configs but not modify wallets.</p>
+
+            <h3>For Administrators</h3>
+            <p>Administrators should have full access:</p>
+            <pre><code>crypto.*</code></pre>
+            <p>Or explicitly:</p>
+            <pre><code>crypto.user.*
+crypto.admin.*</code></pre>
+
+            <h3>For Economy Managers</h3>
+            <p>Staff focused on economy management need:</p>
+            <pre><code>crypto.user.*
+crypto.admin.edit
+crypto.admin.giveall</code></pre>
+
+            <h3>Restricted Trading (Example)</h3>
+            <p>If you want players to only view prices but not trade:</p>
+            <pre><code>crypto.user.price
+crypto.user.balance
+crypto.user.chart
+crypto.user.market</code></pre>
+            <p>Remove <code>crypto.user.trade</code> to disable buying/selling.</p>
+        </section>
+
+        <section class="section">
+            <h2>Troubleshooting Permissions</h2>
+
+            <h3>Players Can't Use Commands</h3>
+            <p><strong>Issue:</strong> Players get "You don't have permission" messages.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Verify the permission is granted: <code>/lp user [player] permission check crypto.user.trade</code></li>
+                <li>Check if your permission plugin is loaded and working</li>
+                <li>Ensure there are no permission negations (permissions set to false)</li>
+                <li>Try granting the wildcard: <code>crypto.user.*</code></li>
+                <li>Restart the server after changing permissions</li>
+            </ul>
+
+            <h3>Admin Commands Not Working</h3>
+            <p><strong>Issue:</strong> Operators can't use admin commands.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check if you're actually OP: <code>/op [your_name]</code></li>
+                <li>Verify admin permissions are granted</li>
+                <li>Try granting explicitly: <code>/lp user [name] permission set crypto.admin.* true</code></li>
+                <li>Check server.properties has <code>enable-command-block=true</code></li>
+            </ul>
+
+            <h3>Permission Conflicts</h3>
+            <p><strong>Issue:</strong> Permissions don't work as expected.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check for negative permissions that override positive ones</li>
+                <li>Verify group inheritance order in your permission plugin</li>
+                <li>Use <code>/lp user [player] permission info</code> to see all active permissions</li>
+                <li>Clear permission cache: <code>/lp reloadconfig</code></li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Security Best Practices</h2>
+            <ul>
+                <li><strong>Principle of Least Privilege:</strong> Only grant permissions that players actually need</li>
+                <li><strong>Separate Roles:</strong> Create different staff roles with appropriate permission levels</li>
+                <li><strong>Audit Regularly:</strong> Review who has admin permissions periodically</li>
+                <li><strong>Log Admin Actions:</strong> All admin commands are logged to console for audit trails</li>
+                <li><strong>Restrict Giveall:</strong> Only give <code>crypto.admin.giveall</code> to highly trusted staff</li>
+                <li><strong>Test Permissions:</strong> Test new permission setups on a test server first</li>
+                <li><strong>Document Changes:</strong> Keep track of which groups have which permissions</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>CryptocurrencyMC Plugin Documentation</p>
+        <p>Created by <a href="https://github.com/MatisseAD">MatisseAD</a> | 
+           <a href="https://github.com/MatisseAD/CryptocurrencyMC">GitHub Repository</a></p>
+    </footer>
+</body>
+</html>

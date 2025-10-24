@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptocurrencyMC - Minecraft Crypto Trading Plugin</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">₿</span>
+                <span>CryptocurrencyMC</span>
+            </a>
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="commands.html">Commands</a></li>
+                <li><a href="permissions.html">Permissions</a></li>
+                <li><a href="configuration.html">Configuration</a></li>
+                <li><a href="api.html">API</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>CryptocurrencyMC</h1>
+            <p>Bring real-world cryptocurrency trading to your Minecraft server. 
+               Players can buy, sell, and trade popular cryptocurrencies with live price updates!</p>
+            <div class="cta-buttons">
+                <a href="installation.html" class="btn btn-primary">Get Started</a>
+                <a href="commands.html" class="btn btn-secondary">View Commands</a>
+            </div>
+        </section>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>Real-Time Prices</h3>
+                <p>Live cryptocurrency prices from CoinGecko API with automatic updates and circuit breaker protection for reliability.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Vault Integration</h3>
+                <p>Seamlessly integrates with your server's economy through Vault. Players buy and sell crypto using your server's currency.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎮</div>
+                <h3>Interactive GUI</h3>
+                <p>Beautiful market GUI with real-time charts, sparklines, and easy-to-use trading interface for all your players.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>Player Trading</h3>
+                <p>Transfer cryptocurrencies between players and convert between different crypto assets with automatic rate calculation.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Leaderboards</h3>
+                <p>Display top crypto investors on your server based on total portfolio value in USD.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <h3>Persistent Wallets</h3>
+                <p>All player wallets are automatically saved and persist across server restarts. Never lose your crypto investments!</p>
+            </div>
+        </div>
+
+        <section class="section">
+            <h2>Key Features</h2>
+            
+            <h3>Supported Cryptocurrencies</h3>
+            <p>CryptocurrencyMC supports a wide range of popular cryptocurrencies including:</p>
+            <ul>
+                <li><strong>Bitcoin (BTC)</strong> - The original cryptocurrency</li>
+                <li><strong>Ethereum (ETH)</strong> - Smart contract platform</li>
+                <li><strong>Binance Coin (BNB)</strong> - Exchange token</li>
+                <li><strong>Cardano (ADA)</strong> - Proof of stake blockchain</li>
+                <li><strong>Solana (SOL)</strong> - High-performance blockchain</li>
+                <li><strong>Dogecoin (DOGE)</strong> - The meme coin</li>
+                <li>And many more configurable options!</li>
+            </ul>
+
+            <h3>Transaction History</h3>
+            <p>Every transaction is recorded and can be viewed by players:</p>
+            <ul>
+                <li>Buy and sell operations</li>
+                <li>Player-to-player transfers</li>
+                <li>Crypto conversions</li>
+                <li>Admin operations and airdrops</li>
+            </ul>
+
+            <h3>Admin Tools</h3>
+            <p>Comprehensive admin commands for managing player wallets:</p>
+            <ul>
+                <li><strong>Set, Add, Remove</strong> - Modify player balances directly</li>
+                <li><strong>Giveall</strong> - Distribute crypto to all online players (airdrops)</li>
+                <li><strong>API Management</strong> - Monitor API health and force price refreshes</li>
+                <li><strong>Hot Reload</strong> - Reload configuration without restarting</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>How It Works</h2>
+            
+            <div class="alert alert-info">
+                <strong>💡 Quick Overview:</strong> Players use your server's currency (via Vault) to purchase cryptocurrencies at real-world prices. 
+                They can hold, trade, and sell their crypto for profit or loss based on market fluctuations.
+            </div>
+
+            <h3>Trading Flow</h3>
+            <ol>
+                <li><strong>Check Prices:</strong> Players view current cryptocurrency prices using <code>/crypto price [symbol]</code></li>
+                <li><strong>Buy Crypto:</strong> Purchase cryptocurrencies with server currency using <code>/crypto buy [symbol] [amount]</code></li>
+                <li><strong>View Balance:</strong> Check portfolio value with <code>/crypto balance</code></li>
+                <li><strong>Sell or Trade:</strong> Sell back to currency or trade with other players</li>
+                <li><strong>Track History:</strong> View all transactions with <code>/crypto history</code></li>
+            </ol>
+
+            <h3>Market GUI</h3>
+            <p>Players can access an interactive GUI with <code>/crypto market</code> that displays:</p>
+            <ul>
+                <li>Real-time prices for all enabled cryptocurrencies</li>
+                <li>24-hour price change indicators</li>
+                <li>Sparkline charts showing price trends</li>
+                <li>Click-to-trade functionality</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>PlaceholderAPI Support</h2>
+            <p>Integrate crypto data into other plugins with PlaceholderAPI placeholders:</p>
+            <pre><code>%crypto_balance_[symbol]%        - Player's balance of a specific crypto
+%crypto_balance_usd_[symbol]%    - USD value of player's crypto holdings
+%crypto_price_[symbol]%          - Current price of a cryptocurrency
+%crypto_total_usd%               - Total portfolio value in USD</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Requirements</h2>
+            <ul>
+                <li><strong>Minecraft Version:</strong> 1.21+ (Paper or Spigot)</li>
+                <li><strong>Java Version:</strong> 21+</li>
+                <li><strong>Dependencies:</strong>
+                    <ul>
+                        <li><span class="badge badge-primary">Required</span> Vault (for economy integration)</li>
+                        <li><span class="badge badge-secondary">Optional</span> PlaceholderAPI (for placeholders)</li>
+                    </ul>
+                </li>
+                <li><strong>Internet Connection:</strong> Required for fetching live cryptocurrency prices</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Quick Start</h2>
+            <ol>
+                <li>Download the latest plugin JAR file</li>
+                <li>Place it in your server's <code>plugins/</code> folder</li>
+                <li>Ensure Vault and an economy plugin are installed</li>
+                <li>Start your server</li>
+                <li>Configure <code>plugins/Cryptocurrency/config.yml</code> to your liking</li>
+                <li>Use <code>/crypto reload</code> to apply changes</li>
+                <li>Start trading with <code>/crypto</code>!</li>
+            </ol>
+
+            <div class="alert alert-success">
+                <strong>✅ Ready to Go!</strong> Check out the <a href="installation.html" style="color: var(--primary-color);">Installation Guide</a> 
+                for detailed setup instructions.
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>CryptocurrencyMC Plugin Documentation</p>
+        <p>Created by <a href="https://github.com/MatisseAD">MatisseAD</a> | 
+           <a href="https://github.com/MatisseAD/CryptocurrencyMC">GitHub Repository</a></p>
+    </footer>
+</body>
+</html>

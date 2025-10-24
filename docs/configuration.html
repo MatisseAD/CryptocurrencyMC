@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Guide - CryptocurrencyMC</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">₿</span>
+                <span>CryptocurrencyMC</span>
+            </a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="commands.html">Commands</a></li>
+                <li><a href="permissions.html">Permissions</a></li>
+                <li><a href="configuration.html" class="active">Configuration</a></li>
+                <li><a href="api.html">API</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <h2>Configuration Guide</h2>
+            <p>The configuration file is located at <code>plugins/Cryptocurrency/config.yml</code>. 
+               This guide explains all available options and how to customize them.</p>
+            
+            <div class="alert alert-info">
+                <strong>💡 Tip:</strong> After making changes to the config file, use <code>/crypto reload</code> 
+                to apply them without restarting the server.
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Market Settings</h2>
+            <p>Configure the market GUI and available cryptocurrencies.</p>
+
+            <h3>enabled_symbols</h3>
+            <pre><code>market:
+  enabled_symbols: ["BTC", "ETH", "SOL", "DOGE"]</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>List of strings</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>["BTC", "ETH", "SOL", "DOGE"]</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>List of cryptocurrency symbols available on your server. Players can only trade these symbols.</td>
+                </tr>
+            </table>
+            <p><strong>Available Symbols:</strong> BTC, ETH, BNB, SOL, ADA, DOGE, XRP, DOT, MATIC, LINK, UNI, AVAX, ATOM, 
+               LTC, BCH, XLM, ALGO, VET, FIL, THETA, and many more supported by CoinGecko.</p>
+            
+            <div class="alert alert-warning">
+                <strong>⚠️ Important:</strong> Only add symbols that are available on CoinGecko API. 
+                Invalid symbols will cause price fetch errors.
+            </div>
+
+            <h3>page_size</h3>
+            <pre><code>market:
+  page_size: 21</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Integer</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>21</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>Number of items per page in the market GUI</td>
+                </tr>
+                <tr>
+                    <td><strong>Valid Range</strong></td>
+                    <td>1-54 (limited by Minecraft chest inventory size)</td>
+                </tr>
+            </table>
+
+            <h3>gui_title</h3>
+            <pre><code>market:
+  gui_title: "&6Crypto Market"</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>String (with color codes)</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>&6Crypto Market</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>Title displayed at the top of the market GUI. Supports Minecraft color codes (&amp; format).</td>
+                </tr>
+            </table>
+
+            <h3>refresh_seconds</h3>
+            <pre><code>market:
+  refresh_seconds: 15</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Integer</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>15</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>How often (in seconds) the market GUI automatically refreshes prices</td>
+                </tr>
+                <tr>
+                    <td><strong>Recommended</strong></td>
+                    <td>10-60 seconds</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>Chart Settings</h2>
+            <p>Configure price history tracking and chart visualization.</p>
+
+            <h3>retention_points</h3>
+            <pre><code>chart:
+  retention_points: 360</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Integer</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>360</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>Maximum number of historical price points to keep per cryptocurrency</td>
+                </tr>
+                <tr>
+                    <td><strong>Impact</strong></td>
+                    <td>Higher values = more detailed history but more memory usage</td>
+                </tr>
+            </table>
+
+            <h3>sample_seconds</h3>
+            <pre><code>chart:
+  sample_seconds: 60</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Integer</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>60</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>How often (in seconds) to sample and store price data</td>
+                </tr>
+                <tr>
+                    <td><strong>Recommended</strong></td>
+                    <td>30-300 seconds</td>
+                </tr>
+            </table>
+            <p><strong>Example:</strong> With 360 retention_points and 60 sample_seconds, you store 6 hours of price history.</p>
+
+            <h3>default_points</h3>
+            <pre><code>chart:
+  default_points: 24</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Integer</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>24</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>Default number of data points to show in charts when not specified</td>
+                </tr>
+            </table>
+
+            <h3>sparkline_chars</h3>
+            <pre><code>chart:
+  sparkline_chars: "▁▂▃▄▅▆▇█"</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>String</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>▁▂▃▄▅▆▇█</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>Characters used to render sparkline charts, from lowest to highest value</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>PlaceholderAPI Settings</h2>
+            <p>Configure placeholder formatting and behavior.</p>
+
+            <h3>enabled</h3>
+            <pre><code>placeholders:
+  enabled: true</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Boolean</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>Enable or disable PlaceholderAPI integration</td>
+                </tr>
+            </table>
+
+            <h3>format</h3>
+            <pre><code>placeholders:
+  format:
+    money: "#,##0.00"
+    quantity: "#,##0.####"</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>money</strong></td>
+                    <td>Number format for USD values (default: #,##0.00)</td>
+                </tr>
+                <tr>
+                    <td><strong>quantity</strong></td>
+                    <td>Number format for cryptocurrency amounts (default: #,##0.####)</td>
+                </tr>
+            </table>
+            <p><strong>Format Syntax:</strong></p>
+            <ul>
+                <li><code>#</code> = optional digit</li>
+                <li><code>0</code> = required digit</li>
+                <li><code>,</code> = thousands separator</li>
+                <li><code>.</code> = decimal point</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>API Settings</h2>
+            <p>Configure CoinGecko API connection and circuit breaker behavior.</p>
+
+            <h3>timeout_ms</h3>
+            <pre><code>api:
+  timeout_ms: 4000</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Integer</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>4000 (4 seconds)</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>Maximum time to wait for API response in milliseconds</td>
+                </tr>
+                <tr>
+                    <td><strong>Recommended</strong></td>
+                    <td>2000-10000 ms</td>
+                </tr>
+            </table>
+
+            <h3>retry</h3>
+            <pre><code>api:
+  retry: 1</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Integer</td>
+                </tr>
+                <tr>
+                    <td><strong>Default</strong></td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td><strong>Description</strong></td>
+                    <td>Number of retry attempts if API request fails</td>
+                </tr>
+                <tr>
+                    <td><strong>Recommended</strong></td>
+                    <td>0-3</td>
+                </tr>
+            </table>
+
+            <h3>Circuit Breaker</h3>
+            <pre><code>api:
+  circuit_breaker:
+    error_threshold: 5
+    open_seconds: 30</code></pre>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>error_threshold</strong></td>
+                    <td>Number of consecutive errors before circuit opens (default: 5)</td>
+                </tr>
+                <tr>
+                    <td><strong>open_seconds</strong></td>
+                    <td>How long to keep circuit open before trying again (default: 30)</td>
+                </tr>
+            </table>
+            <div class="alert alert-info">
+                <strong>💡 What is a Circuit Breaker?</strong> When the API fails repeatedly, the circuit breaker 
+                temporarily stops making requests to prevent server lag. After the timeout period, it tries again.
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Message Customization</h2>
+            <p>All player-facing messages can be customized in the config. Messages support Minecraft color codes.</p>
+
+            <h3>Color Codes</h3>
+            <table>
+                <tr>
+                    <th>Code</th>
+                    <th>Color</th>
+                    <th>Code</th>
+                    <th>Format</th>
+                </tr>
+                <tr>
+                    <td>&amp;0</td>
+                    <td>Black</td>
+                    <td>&amp;l</td>
+                    <td><strong>Bold</strong></td>
+                </tr>
+                <tr>
+                    <td>&amp;1</td>
+                    <td>Dark Blue</td>
+                    <td>&amp;m</td>
+                    <td><s>Strikethrough</s></td>
+                </tr>
+                <tr>
+                    <td>&amp;2</td>
+                    <td>Dark Green</td>
+                    <td>&amp;n</td>
+                    <td><u>Underline</u></td>
+                </tr>
+                <tr>
+                    <td>&amp;3</td>
+                    <td>Dark Aqua</td>
+                    <td>&amp;o</td>
+                    <td><em>Italic</em></td>
+                </tr>
+                <tr>
+                    <td>&amp;4</td>
+                    <td>Dark Red</td>
+                    <td>&amp;r</td>
+                    <td>Reset</td>
+                </tr>
+                <tr>
+                    <td>&amp;5</td>
+                    <td>Dark Purple</td>
+                    <td>&amp;k</td>
+                    <td>Obfuscated</td>
+                </tr>
+                <tr>
+                    <td>&amp;6</td>
+                    <td>Gold</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>&amp;7</td>
+                    <td>Gray</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>&amp;8</td>
+                    <td>Dark Gray</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>&amp;9</td>
+                    <td>Blue</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>&amp;a</td>
+                    <td>Green</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>&amp;b</td>
+                    <td>Aqua</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>&amp;c</td>
+                    <td>Red</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>&amp;d</td>
+                    <td>Light Purple</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>&amp;e</td>
+                    <td>Yellow</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>&amp;f</td>
+                    <td>White</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+
+            <h3>Message Placeholders</h3>
+            <p>Many messages support placeholders that are replaced with actual values:</p>
+            <table>
+                <tr>
+                    <th>Placeholder</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>{symbol}</td>
+                    <td>Cryptocurrency symbol (BTC, ETH, etc.)</td>
+                </tr>
+                <tr>
+                    <td>{amount}</td>
+                    <td>Cryptocurrency amount</td>
+                </tr>
+                <tr>
+                    <td>{player}</td>
+                    <td>Player name</td>
+                </tr>
+                <tr>
+                    <td>{usd}</td>
+                    <td>USD value</td>
+                </tr>
+                <tr>
+                    <td>{price}</td>
+                    <td>Price per unit</td>
+                </tr>
+                <tr>
+                    <td>{error}</td>
+                    <td>Error message</td>
+                </tr>
+                <tr>
+                    <td>{label}</td>
+                    <td>Command label used</td>
+                </tr>
+                <tr>
+                    <td>{count}</td>
+                    <td>Count/number</td>
+                </tr>
+            </table>
+
+            <h3>Example Custom Messages</h3>
+            <pre><code>messages:
+  prefix: "&8[&6₿ &eCrypto&8] &r"
+  
+  trade:
+    buy:
+      success: "&a✓ Bought &f{amount} {symbol} &afor &f${usd}"
+      nomoney: "&c✗ Insufficient funds! Need: &f${usd}"
+    
+    sell:
+      success: "&a✓ Sold &f{amount} {symbol} &afor &f${usd}"
+      notenough: "&c✗ Not enough {symbol}!"
+  
+  transfer:
+    success: "&a✓ Sent &f{amount} {symbol} &ato &f{player}"</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Example Configurations</h2>
+
+            <h3>High-Performance Server</h3>
+            <p>Optimized for servers with many players:</p>
+            <pre><code>market:
+  enabled_symbols: ["BTC", "ETH", "BNB", "SOL"]
+  refresh_seconds: 30
+  
+chart:
+  retention_points: 180
+  sample_seconds: 120
+  
+api:
+  timeout_ms: 3000
+  retry: 0
+  circuit_breaker:
+    error_threshold: 3
+    open_seconds: 60</code></pre>
+
+            <h3>Feature-Rich Server</h3>
+            <p>Maximum features and cryptocurrencies:</p>
+            <pre><code>market:
+  enabled_symbols: ["BTC", "ETH", "BNB", "SOL", "ADA", "DOGE", 
+                    "XRP", "DOT", "MATIC", "LINK", "UNI", "AVAX"]
+  refresh_seconds: 15
+  
+chart:
+  retention_points: 720
+  sample_seconds: 30
+  
+api:
+  timeout_ms: 5000
+  retry: 2
+  circuit_breaker:
+    error_threshold: 10
+    open_seconds: 30</code></pre>
+
+            <h3>Low-Resource Server</h3>
+            <p>Minimal resource usage:</p>
+            <pre><code>market:
+  enabled_symbols: ["BTC", "ETH"]
+  refresh_seconds: 60
+  
+chart:
+  retention_points: 60
+  sample_seconds: 300
+  
+api:
+  timeout_ms: 3000
+  retry: 0
+  circuit_breaker:
+    error_threshold: 3
+    open_seconds: 60</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>Advanced Configuration</h2>
+
+            <h3>Multi-Language Support</h3>
+            <p>While the plugin doesn't have built-in multi-language support, you can create language-specific messages:</p>
+            <pre><code># French Example
+messages:
+  prefix: "&6[&eCrypto&6] &r"
+  trade:
+    buy:
+      success: "&aAchat : &f{amount} {symbol} &7(-${usd})"
+      nomoney: "&cPas assez d'argent. Requis : ${usd}"
+    sell:
+      success: "&aVente : &f{amount} {symbol} &7(+${usd})"
+      notenough: "&cVous n'avez pas assez de {symbol}"</code></pre>
+
+            <h3>Backup Configuration</h3>
+            <div class="alert alert-warning">
+                <strong>⚠️ Important:</strong> Always backup your config file before making major changes!
+            </div>
+            <pre><code># On Linux/Mac
+cp plugins/Cryptocurrency/config.yml plugins/Cryptocurrency/config.yml.backup
+
+# On Windows
+copy plugins\Cryptocurrency\config.yml plugins\Cryptocurrency\config.yml.backup</code></pre>
+
+            <h3>Validation</h3>
+            <p>After editing the config, validate it's still valid YAML:</p>
+            <ul>
+                <li>Use an online YAML validator</li>
+                <li>Check the server console for config errors on startup</li>
+                <li>Use <code>/crypto reload</code> to test changes</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Troubleshooting</h2>
+
+            <h3>Config Not Loading</h3>
+            <p><strong>Symptoms:</strong> Changes don't apply or server won't start.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check for YAML syntax errors (indentation, colons, quotes)</li>
+                <li>Ensure you're using spaces, not tabs for indentation</li>
+                <li>Validate YAML syntax with an online validator</li>
+                <li>Check console for specific error messages</li>
+                <li>Restore from backup if corrupted</li>
+            </ul>
+
+            <h3>Prices Not Updating</h3>
+            <p><strong>Symptoms:</strong> Prices are stale or not updating.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Check if symbols are valid CoinGecko symbols</li>
+                <li>Increase <code>api.timeout_ms</code> if on slow connection</li>
+                <li>Check circuit breaker status with <code>/crypto api status</code></li>
+                <li>Verify internet connection</li>
+            </ul>
+
+            <h3>Performance Issues</h3>
+            <p><strong>Symptoms:</strong> Server lag when many players trade.</p>
+            <p><strong>Solutions:</strong></p>
+            <ul>
+                <li>Reduce number of <code>enabled_symbols</code></li>
+                <li>Increase <code>market.refresh_seconds</code></li>
+                <li>Reduce <code>chart.retention_points</code></li>
+                <li>Increase <code>chart.sample_seconds</code></li>
+                <li>Set <code>api.retry</code> to 0</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>CryptocurrencyMC Plugin Documentation</p>
+        <p>Created by <a href="https://github.com/MatisseAD">MatisseAD</a> | 
+           <a href="https://github.com/MatisseAD/CryptocurrencyMC">GitHub Repository</a></p>
+    </footer>
+</body>
+</html>
